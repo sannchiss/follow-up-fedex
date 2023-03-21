@@ -55,8 +55,8 @@ export const useIntegracionesStore = defineStore('integraciones', {
       // get data from firebase
       const querySnapshot = await getDocs(collection(db, "client_file_gts"));
       querySnapshot.forEach((doc) => {
+        console.log("La data", doc.data());
         this.integrations.push(doc.data());
-        // console.log(doc.data());
       });
 
 
