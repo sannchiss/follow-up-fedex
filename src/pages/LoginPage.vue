@@ -142,19 +142,8 @@ const signInWithGoogle = async () => {
 
       console.log("signInWithGoogle sannchiss: ", result)
 
-
-
-      console.log("router: ", routes)
-
-      // add route children
-      routes.push({ name: 'home' })
-
-      ///router.push({ name: 'main' })
-
-
-
-
-
+      // go to url
+      window.location.href = 'http://localhost:8080/#/home'
 
 
 

@@ -1,18 +1,21 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh lpR fFf">
+
+    <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          Quasar App
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
+          </q-avatar>
+          Seguimiento de Cuentas
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" elevated>
+      <!-- drawer content -->
       <q-list>
         <q-item-label header>
           Follow up
@@ -30,19 +33,30 @@
         </q-item>
 
       </q-list>
+
+
     </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer reveal elevated class="bg-blue-8 text-white">
+      <q-toolbar>
+        <q-toolbar-title>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
+          </q-avatar>
+          <div></div>
+        </q-toolbar-title>
+      </q-toolbar>
+    </q-footer>
+
   </q-layout>
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref
-} from 'vue'
+import { ref } from 'vue'
 
 const linksList = [{
   title: 'DashBoard',
@@ -71,9 +85,8 @@ const linksList = [{
 
 ]
 
-export default defineComponent({
-  name: 'MainLayout',
 
+export default {
   setup() {
     const leftDrawerOpen = ref(false)
 
@@ -85,5 +98,5 @@ export default defineComponent({
       }
     }
   }
-})
+}
 </script>
