@@ -7,28 +7,27 @@
     Selected: {{ JSON.stringify(selected) }}
   </div>
   <div class="q-pa-sm">
-    <q-table v-model:selected="selected" :columns="columns" :filter="filter" :grid="$q.screen.xs"
-      :loading="cuentasStore.loading" :rows="cuentasStore.listado" row-key="name" selection="multiple"
-      title="Tabla de cuentas" bordered>
+    <q-table v-model:selected="selected" virtual-scroll flat :virtual-scroll-sticky-size-start="48" :columns="columns"
+      :filter="filter" :grid="$q.screen.xs" :loading="cuentasStore.loading" :rows="cuentasStore.listado" row-key="name"
+      selection="multiple" title="Tabla de cuentas" bordered>
 
       <template v-slot:header-selection="scope">
         <q-toggle v-model="scope.selected" @update:model-value="accountCopy" icon="content_copy" />
+
       </template>
 
       <template v-slot:body-selection="scope">
         <q-toggle v-model="scope.selected" @update:model-value="accountCopy" icon="content_copy" />
 
-        <q-btn v-model="scope.selected" rounded dense color="primary" size="xs" icon="perm_contact_calendar"
-          @click="addInfo" />
+        <!--boton check para copiar-->
+        <q-btn v-model="scope.selected" rounded dense color="primary" size="xs" icon="check" @click="copyInfo()" />
+
 
       </template>
 
-
-
-
       <template v-slot:body-cell="props">
         <q-td :props="props">
-          <q-badge color="blue" :label="props.value" />
+          <q-badge color="white" text-color="black" :label="props.value" />
         </q-td>
 
       </template>
@@ -46,38 +45,58 @@
       </template>
     </q-table>
   </div>
-
-
-
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useCuentasStore } from 'src/stores/cuentas/cuentas-store'
+import {
+  ref
+} from 'vue'
+import {
+  useCuentasStore
+} from 'src/stores/cuentas/cuentas-store'
 import Localbase from 'localbase'
-import { Notify } from 'quasar'
+import {
+  Notify
+} from 'quasar'
 
 let dblocal = new Localbase("db");
 
+const columns = [{
+  name: 'name',
+  required: true,
+  label: 'Nombre Empresa',
+  align: 'left',
+  field: row => row.name,
+  format: val => `${val}`,
+  sortable: true,
+  style: 'width: 100px',
+  color: 'primary'
 
-const columns = [
-  {
-    name: 'name',
-    required: true,
-    label: 'Nombre Empresa',
-    align: 'left',
-    field: row => row.name,
-    format: val => `${val}`,
-    sortable: true
-  },
-  { name: 'Cuenta GTS', align: 'center', label: 'Cuenta GTS', field: 'cuentaGts', sortable: true },
-  { name: 'Cuenta TXA', align: 'center', label: 'Cuenta TXA', field: 'cuentaTxa', sortable: true },
-  { name: 'RUT', label: 'Rut', field: 'rut', sortable: true },
+
+},
+{
+  name: 'Cuenta GTS',
+  align: 'center',
+  label: 'Cuenta GTS',
+  field: 'cuentaGts',
+  sortable: true
+},
+{
+  name: 'Cuenta TXA',
+  align: 'center',
+  label: 'Cuenta TXA',
+  field: 'cuentaTxa',
+  sortable: true
+},
+{
+  name: 'RUT',
+  label: 'Rut',
+  field: 'rut',
+  sortable: true
+},
 ]
 
 const rows = []
-
-
 
 export default {
   setup() {
@@ -99,15 +118,28 @@ export default {
 
     accountCopy() {
       // copy data selected name and cuentaGts
-      navigator.clipboard.writeText(this.selected.map(({ name, cuentaGts, cuentaTxa }) => `Empresa: ${name} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa}`
-      ).join('\n')).then(() => {
+      navigator.clipboard.writeText(this.selected.map(({
+        name,
+        cuentaGts,
+        cuentaTxa
+      }) => `Empresa: ${name} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa}`).join('\n')).then(() => {
         console.log('Copied to clipboard')
 
-        Notify.create({
-          message: 'Copied to clipboard',
-          color: 'positive',
-          position: 'top'
-        })
+        // if copy data to clipboard show notification
+
+        if (this.selected.length > 0) {
+          Notify.create({
+            message: 'Copied to clipboard',
+            color: 'positive',
+            position: 'top'
+          })
+        } else {
+          Notify.create({
+            message: 'No data selected',
+            color: 'negative',
+            position: 'top'
+          })
+        }
 
 
 
@@ -115,12 +147,69 @@ export default {
         console.log('Failed to copy to clipboard')
       })
 
+    },
 
+    copyInfo() {
+
+      // copy data selected name and cuentaGts
+      navigator.clipboard.writeText(this.selected.map(({
+        name,
+        cuentaGts,
+        cuentaTxa
+      }) => `Empresa: ${name} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa}`).join('\n')).then(() => {
+        console.log('Copied to clipboard')
+
+        // if copy data to clipboard show notification
+
+        if (this.selected.length > 0) {
+          Notify.create({
+            message: 'Copied to clipboard',
+            color: 'positive',
+            position: 'top'
+          })
+        } else {
+          Notify.create({
+            message: 'No data selected',
+            color: 'negative',
+            position: 'top'
+          })
+        }
+
+      }, () => {
+        console.log('Failed to copy to clipboard')
+      })
 
     },
 
     addInfo() {
-      console.log('addInfo', this.accountCopy)
+
+      // add data selected to dblocal
+
+      if (this.selected.length > 0) {
+        this.selected.forEach(({
+          name,
+          cuentaGts,
+          cuentaTxa
+        }) => {
+          dblocal.collection('cuentas').add({
+            name,
+            cuentaGts,
+            cuentaTxa
+          })
+        })
+
+        Notify.create({
+          message: 'Data added to dblocal',
+          color: 'positive',
+          position: 'top'
+        })
+      } else {
+        Notify.create({
+          message: 'No data selected',
+          color: 'negative',
+          position: 'top'
+        })
+      }
     }
 
   },
@@ -133,7 +222,6 @@ export default {
       this.cuentasStore.listado = cuentas
     })
   }
-
 
 }
 </script>
