@@ -4,12 +4,13 @@
   </div>
 
   <div class="q-mt-md">
-    Selected: {{ JSON.stringify(selected) }}
+
   </div>
   <div class="q-pa-sm">
-    <q-table v-model:selected="selected" virtual-scroll flat :virtual-scroll-sticky-size-start="48" :columns="columns"
-      :filter="filter" :grid="$q.screen.xs" :loading="cuentasStore.loading" :rows="cuentasStore.listado" row-key="name"
-      selection="multiple" title="Tabla de cuentas" bordered>
+    <q-table v-model:selected="selected" dense :pagination="initialPagination" virtual-scroll flat
+      :virtual-scroll-sticky-size-start="48" :columns="columns" :filter="filter" :grid="$q.screen.xs"
+      :loading="cuentasStore.loading" :rows="cuentasStore.listado" row-key="cuentaTxa" selection="single"
+      title="Tabla de cuentas" bordered>
 
       <template v-slot:header-selection="scope">
         <q-toggle v-model="scope.selected" @update:model-value="accountCopy" icon="content_copy" />
@@ -20,7 +21,8 @@
         <q-toggle v-model="scope.selected" @update:model-value="accountCopy" icon="content_copy" />
 
         <!--boton check para copiar-->
-        <q-btn v-model="scope.selected" rounded dense color="primary" size="xs" icon="check" @click="copyInfo()" />
+        <q-btn v-model="scope.selected" rounded dense color="primary" size="xs" icon="recent_actors"
+          @click="onRowClick(scope.row)" />
 
 
       </template>
@@ -103,7 +105,21 @@ export default {
 
     const cuentasStore = useCuentasStore()
 
+
     return {
+
+      onRowClick: (row) => alert(`${row.rut} clicked`),
+
+      initialPagination: {
+        sortBy: 'name',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10
+      },
+
+
+
+
 
       cuentasStore,
       selected: ref([]),
@@ -125,11 +141,13 @@ export default {
       }) => `Empresa: ${name} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa}`).join('\n')).then(() => {
         console.log('Copied to clipboard')
 
+        console.log(this.selected[0].name)
         // if copy data to clipboard show notification
 
+        // show notify if data selected
         if (this.selected.length > 0) {
           Notify.create({
-            message: 'Copied to clipboard',
+            message: 'Copied ' + this.selected[0].name + '' + this.selected[0].cuentaGts + '' + this.selected[0].cuentaTxa + ' to clipboard',
             color: 'positive',
             position: 'top'
           })

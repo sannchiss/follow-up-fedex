@@ -11,7 +11,7 @@ import {
   orderBy,
   getDoc
 } from "firebase/firestore";
-import { db, auth } from "src/firebase/index";
+import { dbfirebase, auth } from "src/firebase/index";
 
 export const useIntegracionesStore = defineStore('integraciones', {
   state: () => ({
@@ -53,7 +53,7 @@ export const useIntegracionesStore = defineStore('integraciones', {
       this.integrations = []
 
       // get data from firebase
-      const querySnapshot = await getDocs(collection(db, "client_file_gts"));
+      const querySnapshot = await getDocs(collection(dbfirebase, "client_file_gts"));
       querySnapshot.forEach((doc) => {
         console.log("La data", doc.data());
         this.integrations.push(doc.data());
@@ -67,7 +67,7 @@ export const useIntegracionesStore = defineStore('integraciones', {
 
       const data = []
 
-      const q = query(collection(db, "client_file_gts"), where("account_txa", "==", id));
+      const q = query(collection(dbfirebase, "client_file_gts"), where("account_txa", "==", id));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
 

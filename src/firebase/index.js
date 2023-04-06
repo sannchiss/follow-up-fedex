@@ -15,10 +15,10 @@ const app = initializeApp(firebaseConfig)
 
 const auth = getAuth(app)
 
-const db = getFirestore(app)
+const dbfirebase = getFirestore(app)
 
 
-export { auth, db }
+export { auth, dbfirebase }
 
 
 

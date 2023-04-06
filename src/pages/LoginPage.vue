@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import auth from 'src/firebase/index'
+import auth from '../firebase/index'
 import { ref } from 'vue'
 import {
   getAuth,
@@ -73,7 +73,7 @@ import {
 
 import routes from 'src/router/routes'
 
-auth
+
 
 const email = ref('sannchiss')
 const password = ref('16961225')

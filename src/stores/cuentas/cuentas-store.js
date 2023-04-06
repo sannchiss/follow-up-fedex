@@ -80,8 +80,16 @@ export const useCuentasStore = defineStore('cuentas', {
       //delete bd cuentas
       dblocal.collection('cuentas').delete()
 
+      // create bd cuentas
+
+
       // clear listado
       this.listado = []
+
+
+      /*  this.cuentas.forEach(element => {
+         console.log('cargando', element)
+       }) */
 
       this.cuentas.forEach(element => {
 
@@ -122,7 +130,6 @@ export const useCuentasStore = defineStore('cuentas', {
 
 
         })
-
 
       })
 
