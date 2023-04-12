@@ -73,6 +73,7 @@ import {
 
 import routes from 'src/router/routes'
 
+auth
 
 
 const email = ref('sannchiss')

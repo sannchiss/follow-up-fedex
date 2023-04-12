@@ -12,6 +12,11 @@ export const useCuentasStore = defineStore('cuentas', {
     loading: false,
     listado: [],
     progress: 0,
+    showDialogInfo: false,
+    infoClient: [],
+    infoComplement: '',
+    typeIntegration: '',
+
   }),
   getters: {
 
@@ -60,6 +65,7 @@ export const useCuentasStore = defineStore('cuentas', {
         const fileArray = fileString.split('\n')
         this.cuentas = fileArray.map((item) => item.split(';'))
 
+
         // save file in localbase
         this.saveFileStore()
 
@@ -77,8 +83,12 @@ export const useCuentasStore = defineStore('cuentas', {
 
       var count = 0
 
-      //delete bd cuentas
+
+      // delete bd cuentas exist
       dblocal.collection('cuentas').delete()
+
+
+
 
       // create bd cuentas
 
@@ -86,12 +96,18 @@ export const useCuentasStore = defineStore('cuentas', {
       // clear listado
       this.listado = []
 
+      let accountLoad = JSON.parse(JSON.stringify(this.cuentas))
 
-      /*  this.cuentas.forEach(element => {
-         console.log('cargando', element)
-       }) */
 
-      this.cuentas.forEach(element => {
+      accountLoad.forEach(element => {
+
+        this.listado.push({
+          name: element[2],
+          cuentaTxa: element[0],
+          cuentaGts: element[3],
+          rut: element[1]
+        })
+
 
         //console.log('cargando', count, '/', this.cuentas.length)
         dblocal.collection('cuentas').add({
@@ -102,16 +118,14 @@ export const useCuentasStore = defineStore('cuentas', {
         }).then(() => {
 
           count++
+
           // redondear a 2 decimales
           this.progress = Math.round((count / this.cuentas.length * 100) * 100) / 100
 
 
-          this.listado.push({
-            name: element[2],
-            cuentaTxa: element[0],
-            cuentaGts: element[3],
-            rut: element[1],
-          })
+
+
+
 
           if (count === this.cuentas.length) {
             console.log('cargado')
@@ -130,6 +144,9 @@ export const useCuentasStore = defineStore('cuentas', {
 
 
         })
+
+
+
 
       })
 

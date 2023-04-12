@@ -1,7 +1,10 @@
 <template>
   <div v-if="cuentasStore.progress != 0">
-    {{ cuentasStore.progress + '%' }}
+    {{ cuentasStore.progress + '%' + 'DB' }}
   </div>
+
+  <DialogInfoClient />
+
 
   <div class="q-mt-md">
 
@@ -12,15 +15,9 @@
       :loading="cuentasStore.loading" :rows="cuentasStore.listado" row-key="cuentaTxa" selection="single"
       title="Tabla de cuentas" bordered>
 
-      <template v-slot:header-selection="scope">
-        <q-toggle v-model="scope.selected" @update:model-value="accountCopy" icon="content_copy" />
-
-      </template>
-
       <template v-slot:body-selection="scope">
         <q-toggle v-model="scope.selected" @update:model-value="accountCopy" icon="content_copy" />
 
-        <!--boton check para copiar-->
         <q-btn v-model="scope.selected" rounded dense color="primary" size="xs" icon="recent_actors"
           @click="onRowClick(scope.row)" />
 
@@ -31,7 +28,6 @@
         <q-td :props="props">
           <q-badge color="white" text-color="black" :label="props.value" />
         </q-td>
-
       </template>
 
       <template v-slot:top-right>
@@ -108,18 +104,21 @@ export default {
 
     return {
 
-      onRowClick: (row) => alert(`${row.rut} clicked`),
+      onRowClick: (row) => {
+        cuentasStore.showDialogInfo = true
+        cuentasStore.infoClient = row
+        // alert(`${row.rut} clicked`)
+
+      },
+
 
       initialPagination: {
+        title: 'Cuentas',
         sortBy: 'name',
         descending: false,
         page: 1,
         rowsPerPage: 10
       },
-
-
-
-
 
       cuentasStore,
       selected: ref([]),
@@ -199,36 +198,6 @@ export default {
 
     },
 
-    addInfo() {
-
-      // add data selected to dblocal
-
-      if (this.selected.length > 0) {
-        this.selected.forEach(({
-          name,
-          cuentaGts,
-          cuentaTxa
-        }) => {
-          dblocal.collection('cuentas').add({
-            name,
-            cuentaGts,
-            cuentaTxa
-          })
-        })
-
-        Notify.create({
-          message: 'Data added to dblocal',
-          color: 'positive',
-          position: 'top'
-        })
-      } else {
-        Notify.create({
-          message: 'No data selected',
-          color: 'negative',
-          position: 'top'
-        })
-      }
-    }
 
   },
 
@@ -239,7 +208,16 @@ export default {
     dblocal.collection('cuentas').get().then(cuentas => {
       this.cuentasStore.listado = cuentas
     })
+  },
+
+  components: {
+
+    'DialogInfoClient': require('src/components/dialogs/info-client.vue').default
+
+
   }
+
+
 
 }
 </script>
