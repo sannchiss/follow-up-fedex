@@ -18,6 +18,7 @@ export const useIntegracionesStore = defineStore('integraciones', {
 
     integrations: [],
     searchIntegration: '',
+    dialogoAvance: false,
 
   }),
 

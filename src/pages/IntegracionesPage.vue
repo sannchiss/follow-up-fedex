@@ -1,7 +1,6 @@
 <template>
-
   <div class="q-pa-md">
-    <div class="q-gutter-md" style="max-width: 900px">
+    <div class="q-gutter-md" style="max-width: 1200px">
       <integraciones-component />
     </div>
   </div>
@@ -11,7 +10,6 @@
   <div class="q-pa-md">
     <cuentas-table-component />
   </div>
-
 </template>
 
 <script>
@@ -28,6 +26,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

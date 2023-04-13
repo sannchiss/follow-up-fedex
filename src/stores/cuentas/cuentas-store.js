@@ -2,6 +2,20 @@ import { defineStore } from 'pinia'
 import Localbase from 'localbase'
 import { Notify } from 'quasar'
 
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  orderBy,
+  getDoc
+} from "firebase/firestore";
+
+import { dbfirebase, auth } from "src/firebase/index";
+
 
 let dblocal = new Localbase("db");
 
@@ -122,11 +136,6 @@ export const useCuentasStore = defineStore('cuentas', {
           // redondear a 2 decimales
           this.progress = Math.round((count / this.cuentas.length * 100) * 100) / 100
 
-
-
-
-
-
           if (count === this.cuentas.length) {
             console.log('cargado')
             this.loading = false
@@ -139,19 +148,44 @@ export const useCuentasStore = defineStore('cuentas', {
               position: 'top'
             })
 
-
           }
 
-
         })
-
-
-
 
       })
 
 
+    },
+
+    async saveInfoClientStore(data) {
+
+      try {
+        const response = await addDoc(collection(dbfirebase, "client_file_gts"), data)
+        console.log("Document written with ID: ", response.id);
+        // show notification
+        Notify.create({
+          message: 'Se guardo la información correctamente',
+          color: 'positive',
+          position: 'top'
+        })
+
+      }
+      catch (error) {
+        console.log('error: ', error)
+        Notify.create({
+          message: 'Error al guardar la información' + error,
+          color: 'negative',
+          position: 'top'
+        })
+      }
+
+
+
+
     }
+
+
+
 
   },
 })
