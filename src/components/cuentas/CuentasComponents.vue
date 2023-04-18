@@ -1,6 +1,6 @@
 <template>
   <q-file v-model="cuentasStore.file" @update:model-value="cuentasStore.uploadFileStore($event)" label="Label"
-    max-files="12" bottom-slots counter filled>
+    max-files="12" bottom-slots counter filled accept=".txt">
     <template v-slot:before>
       <q-icon name="folder_open" />
     </template>
@@ -13,7 +13,6 @@
       <q-btn round dense flat icon="add" @click.prevent="cuentasStore.uploadFileStore" />
     </template>
   </q-file>
-
 </template>
 
 <script>
@@ -39,6 +38,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

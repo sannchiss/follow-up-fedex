@@ -19,6 +19,7 @@ export const useIntegracionesStore = defineStore('integraciones', {
     integrations: [],
     searchIntegration: '',
     dialogoAvance: false,
+    account_txa: '',
 
   }),
 
@@ -36,7 +37,7 @@ export const useIntegracionesStore = defineStore('integraciones', {
       else {
 
         return state.integrations.filter((integration) => {
-          console.log(integration.company.toLowerCase().includes(this.searchIntegration.toLowerCase()))
+          //console.log(integration.company.toLowerCase().includes(this.searchIntegration.toLowerCase()))
           return integration.company.toLowerCase().includes(this.searchIntegration.toLowerCase())
         })
 
@@ -56,7 +57,7 @@ export const useIntegracionesStore = defineStore('integraciones', {
       // get data from firebase
       const querySnapshot = await getDocs(collection(dbfirebase, "client_file_gts"));
       querySnapshot.forEach((doc) => {
-        console.log("La data", doc.data());
+        //console.log("La data", doc.data());
         this.integrations.push(doc.data());
       });
 

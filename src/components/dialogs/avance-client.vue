@@ -1,58 +1,75 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
+  <q-dialog v-model="integracionesStore.dialogoAvance" full-width>
+    <q-card>
+      <q-card-section style="background-color:darkgrey;">
+        <div class="text-h6">Integracion avance {{ integracionesStore.account_txa }}</div>
+      </q-card-section>
 
-    <q-dialog v-model="integracionesStore.dialogoAvance" persistent :maximized="maximizedToggle"
-      transition-show="slide-up" transition-hide="slide-down">
-      <q-card class="bg-blue-grey-5">
-        <q-bar>
-          <q-space />
+      <q-card-section class="q-pt-none">
 
-          <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle">
-            <q-tooltip v-if="maximizedToggle" class="bg-white text-primary">Minimize</q-tooltip>
-          </q-btn>
-          <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle">
-            <q-tooltip v-if="!maximizedToggle" class="bg-white text-primary">Maximize</q-tooltip>
-          </q-btn>
-          <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip class="bg-white text-primary">Close</q-tooltip>
-          </q-btn>
-        </q-bar>
+        <div class="row">
+          <div class="col-12 col-md-3">
 
-        <q-card-section>
-          <div class="text-h6">Integracion avance</div>
-        </q-card-section>
+            <div class="q-pa-md">
+              Model: {{ model }}
 
-        <q-card-section class="q-pt-none">
+              <q-date v-model="model" range />
+            </div>
 
-          <div class="row">
-            <div class="col">
 
-              <div class="q-pa-md">
-                <div class="q-pb-sm">
-                  Model: {{ model }}
+          </div>
+          <div class="col-12 col-md-auto">
+
+            <div class="q-pa-md">
+              <div class="row">
+
+                <div class="col">
+                  <q-select filled v-model="modelOptionsIntegration" use-input use-chips multiple input-debounce="0"
+                    @new-value="createValue" :options="filterOptions" @filter="filterFn" style="width: 500px"
+                    label="actividades">
+
+                    <template v-slot:after>
+                      <q-btn round dense flat icon="send" @click="comentario()" />
+                    </template>
+
+                  </q-select>
                 </div>
+              </div>
+            </div>
 
-                <q-date v-model="model" range />
+            <div class="q-pa-md" style="width: 500px">
+
+              <div class="column" style="height: 350px">
+                <div class="col">
+                  <q-input v-model="comentarios" filled type="textarea" label="comentarios" clearable />
+                </div>
+                <div class="col flex flex-center">
+                  <q-btn color="white" text-color="black" label="Guardar" icon="save" />
+                </div>
+                <div class="col flex flex-center">
+                  <q-btn color="white" text-color="black" label="Guardar" icon="save" />
+                </div>
               </div>
 
-
             </div>
-            <div class="col">
-
-              <div class="q-pa-md">
-                <q-select filled v-model="modelOptionsIntegration" use-input use-chips multiple input-debounce="0"
-                  @new-value="createValue" :options="filterOptions" @filter="filterFn" style="width: 500px" />
-              </div>
 
 
-            </div>
+          </div>
+          <q-separator vertical inset />
+
+          <div class="col-12 col-md-4">
+            <historial-integracion />
           </div>
 
+        </div>
 
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-  </div>
+      </q-card-section>
+
+      <q-card-actions align="right" class="bg-white text-teal">
+        <q-btn flat label="OK" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -81,6 +98,15 @@ const optionsIntegration = [
 ]
 
 export default {
+
+  props: {
+    account_txa: {
+      type: String,
+      required: true
+    }
+  },
+
+
   setup() {
 
     const integracionesStore = useIntegracionesStore()
@@ -95,6 +121,7 @@ export default {
       model: ref({ from: '2020/07/08', to: '2020/07/17' }),
       dialog: ref(false),
       maximizedToggle: ref(true),
+      comentarios: ref(''),
 
 
 
@@ -132,15 +159,20 @@ export default {
             )
           }
         })
+      },
+
+      comentario() {
+
+        // add to comentarios from modelOptionsIntegration
+        this.comentarios = this.modelOptionsIntegration.join(', ')
+
       }
 
 
-
-
-
-
-
     }
-  }
+  },
+  components: {
+    'historial-integracion': require('./historial-integracion-client.vue').default,
+  },
 }
 </script>

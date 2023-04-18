@@ -1,6 +1,8 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
 
+    {{ account_txa }}
+
     <q-dialog v-model="cuentasStore.showDialogInfo">
       <q-card style="width: 500px; max-width: 80vw;">
         <q-card-section>
@@ -70,6 +72,13 @@ import { ref } from 'vue'
 import { useCuentasStore } from 'src/stores/cuentas/cuentas-store';
 
 export default {
+
+  props: {
+    account_txa: {
+      type: String,
+      required: true
+    }
+  },
 
 
 

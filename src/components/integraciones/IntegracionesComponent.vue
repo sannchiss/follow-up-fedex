@@ -1,51 +1,4 @@
 <template>
-  <!--     <integraciones-buscador />
-
-    <q-list bordered class="rounded-borders" style="max-width: 600px">
-      <q-item-label header>Integraciones FedEx - GTS</q-item-label>
-
-      <q-item v-for="empresa in integracionesStore.integrationsFilter" :key="empresa.id">
-
-        <q-item-section avatar top>
-          <q-icon name="account_tree" color="black" size="34px" />
-        </q-item-section>
-
-        <q-item-section top class="col-2 gt-sm">
-          <q-item-label class="q-mt-sm">{{ empresa.service_type }}</q-item-label>
-        </q-item-section>
-
-        <q-item-section top>
-          <q-item-label lines="1">
-            <span class="text-weight-medium">[{{ empresa.company }}]</span>
-            <span class="text-grey-8"> - GitHub repository</span>
-          </q-item-label>
-          <q-item-label caption lines="1">
-            @rstoenescu in #3: > Generic type parameter for props
-          </q-item-label>
-          <q-item-label lines="1" class="q-mt-xs text-body2 text-weight-bold text-primary text-uppercase">
-            <span class="cursor-pointer" @click="openInfo(empresa.account_txa)">Open info</span>
-          </q-item-label>
-        </q-item-section>
-
-        <q-item-section top side>
-          <div class="text-grey-8 q-gutter-xs">
-            <q-btn class="gt-xs" size="12px" flat dense round icon="delete" />
-            <q-btn class="gt-xs" size="12px" flat dense round icon="done" />
-            <q-btn size="12px" flat dense round icon="more_vert" />
-          </div>
-        </q-item-section>
-
-
-
-      </q-item>
-
-      <q-separator inset />
-
-
-    </q-list> -->
-
-  <avance-dialogo />
-
   <div class="q-mt-lg q-mr-sm">
     <q-table flat bordered title="Integraciones" :rows="integracionesStore.integrations" :columns="columns"
       row-key="company" :filter="filter">
@@ -80,65 +33,17 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%">
-            <div class="q-pa-md example-row-equal-width">
 
-              <div class="row">
-                <div class="col">
+            <accion-boton-integracion :account_txa="props.row.account_txa" @openInfo="openInfo" />
 
-                  <q-btn-group push>
-                    <q-btn push label="Avance" color="blue" icon="add_circle_outline"
-                      @click="integracionesStore.dialogoAvance = true" />
-                    <q-btn push label="Ficha" color="blue" icon="visibility" />
-
-                    <q-btn-dropdown split color="orange" push glossy no-caps icon="folder" label="Envío Email"
-                      @click="onMainClick">
-                      <q-list>
-                        <q-item clickable v-close-popup @click="onItemClick">
-                          <q-item-section avatar>
-                            <q-avatar icon="folder" color="primary" text-color="white" />
-                          </q-item-section>
-                          <q-item-section>
-                            <q-item-label>Photos</q-item-label>
-                            <q-item-label caption>February 22, 2016</q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
-                            <q-icon name="info" color="amber" />
-                          </q-item-section>
-                        </q-item>
-
-                        <q-item clickable v-close-popup @click="onItemClick">
-                          <q-item-section avatar>
-                            <q-avatar icon="assignment" color="secondary" text-color="white" />
-                          </q-item-section>
-                          <q-item-section>
-                            <q-item-label>Vacation</q-item-label>
-                            <q-item-label caption>February 22, 2016</q-item-label>
-                          </q-item-section>
-                          <q-item-section side>
-                            <q-icon name="info" color="amber" />
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                    </q-btn-dropdown>
-
-
-
-                  </q-btn-group>
-
-                </div>
-                <div class="col">
-                  .col
-                </div>
-              </div>
-            </div>
-
-            <!--             <div class="text-left">This is expand slot for row above: {{ props.row.company }}.</div>
- -->
           </q-td>
         </q-tr>
+
+
       </template>
 
     </q-table>
+    <avance-dialogo />
   </div>
 </template>
 
@@ -168,9 +73,14 @@ const columns = [
 const rows = []
 
 
-
-
 export default {
+  props: {
+    account_txa: {
+      type: String,
+      required: true
+    }
+  },
+
 
   setup() {
 
@@ -199,9 +109,6 @@ export default {
 
     const filter = ref('')
 
-
-
-
     return {
 
       columns,
@@ -229,10 +136,8 @@ export default {
 
   },
   components: {
-
+    'accion-boton-integracion': require('../shared/accion-boton-integracion.vue').default,
     'avance-dialogo': require('../dialogs/avance-client.vue').default,
-
-    //'integraciones-buscador': require('./integracionesBuscadorComponent.vue').default,
 
   }
 

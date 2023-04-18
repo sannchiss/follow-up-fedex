@@ -101,12 +101,6 @@ export const useCuentasStore = defineStore('cuentas', {
       // delete bd cuentas exist
       dblocal.collection('cuentas').delete()
 
-
-
-
-      // create bd cuentas
-
-
       // clear listado
       this.listado = []
 
@@ -114,6 +108,8 @@ export const useCuentasStore = defineStore('cuentas', {
 
 
       accountLoad.forEach(element => {
+
+
 
         this.listado.push({
           name: element[2],
@@ -123,12 +119,18 @@ export const useCuentasStore = defineStore('cuentas', {
         })
 
 
-        //console.log('cargando', count, '/', this.cuentas.length)
+
+      })
+
+
+
+      this.listado.forEach(element => {
+
         dblocal.collection('cuentas').add({
-          name: element[2],
-          cuentaTxa: element[0],
-          cuentaGts: element[3],
-          rut: element[1],
+          name: element.name,
+          cuentaTxa: element.cuentaTxa,
+          cuentaGts: element.cuentaGts,
+          rut: element.rut,
         }).then(() => {
 
           count++
@@ -150,9 +152,26 @@ export const useCuentasStore = defineStore('cuentas', {
 
           }
 
-        })
+
+
+
+        }).catch((error) => {
+          console.log(error)
+        }
+        )
+
+        // reload ventana
+        window.location.reload()
+
+
+
 
       })
+
+
+
+
+
 
 
     },
