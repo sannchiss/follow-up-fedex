@@ -97,9 +97,8 @@ export const useCuentasStore = defineStore('cuentas', {
 
       var count = 0
 
-
-      // delete bd cuentas exist
-      dblocal.collection('cuentas').delete()
+      // delete db localStorage
+      localStorage.removeItem('cuentas')
 
       // clear listado
       this.listado = []
@@ -109,8 +108,6 @@ export const useCuentasStore = defineStore('cuentas', {
 
       accountLoad.forEach(element => {
 
-
-
         this.listado.push({
           name: element[2],
           cuentaTxa: element[0],
@@ -118,59 +115,29 @@ export const useCuentasStore = defineStore('cuentas', {
           rut: element[1]
         })
 
+        count++
 
+        // redondear a 2 decimales
+        this.progress = Math.round((count / this.cuentas.length * 100) * 100) / 100
 
-      })
+        if (count === this.cuentas.length) {
+          console.log('cargado')
+          this.loading = false
+          count = 0
+          this.progress = 0
 
+          Notify.create({
+            message: 'Se guardaron las cuentas correctamente',
+            color: 'positive',
+            position: 'top'
+          })
 
-
-      this.listado.forEach(element => {
-
-        dblocal.collection('cuentas').add({
-          name: element.name,
-          cuentaTxa: element.cuentaTxa,
-          cuentaGts: element.cuentaGts,
-          rut: element.rut,
-        }).then(() => {
-
-          count++
-
-          // redondear a 2 decimales
-          this.progress = Math.round((count / this.cuentas.length * 100) * 100) / 100
-
-          if (count === this.cuentas.length) {
-            console.log('cargado')
-            this.loading = false
-            count = 0
-            this.progress = 0
-
-            Notify.create({
-              message: 'Se guardaron las cuentas correctamente',
-              color: 'positive',
-              position: 'top'
-            })
-
-          }
-
-
-
-
-        }).catch((error) => {
-          console.log(error)
         }
-        )
-
-        // reload ventana
-        window.location.reload()
-
-
 
 
       })
 
-
-
-
+      localStorage.setItem('cuentas', JSON.stringify(this.listado))
 
 
 

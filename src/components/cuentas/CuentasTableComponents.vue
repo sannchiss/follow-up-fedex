@@ -213,9 +213,15 @@ export default {
 
     this.cuentasStore.listado = []
 
-    dblocal.collection('cuentas').get().then(cuentas => {
+    // get items localstorage
+    this.cuentasStore.listado = localStorage.getItem('cuentas')
+    // convert to json
+    this.cuentasStore.listado = JSON.parse(this.cuentasStore.listado)
+
+
+    /* dblocal.collection('cuentas').get().then(cuentas => {
       this.cuentasStore.listado = cuentas
-    })
+    }) */
   },
 
   components: {
