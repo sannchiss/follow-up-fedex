@@ -20,7 +20,6 @@
         </q-input>
       </template>
 
-
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td auto-width>

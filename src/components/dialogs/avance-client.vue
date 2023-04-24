@@ -3,6 +3,11 @@
     <q-card>
       <q-card-section style="background-color:darkgrey;">
         <div class="text-h6">Integracion avance {{ integracionesStore.account_txa }}</div>
+
+        <!--add closed buttom direction left-->
+        <q-btn flat round dense icon="close" class="q-mr-md" @click="integracionesStore.dialogoAvance = false" />
+
+
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -11,11 +16,8 @@
           <div class="col-12 col-md-3">
 
             <div class="q-pa-md">
-              Model: {{ model }}
-
               <q-date v-model="model" range />
             </div>
-
 
           </div>
           <div class="col-12 col-md-auto">
@@ -39,20 +41,26 @@
 
             <div class="q-pa-md" style="width: 500px">
 
-              <div class="column" style="height: 350px">
+              <div class="column" style="height: 450px">
                 <div class="col">
                   <q-input v-model="comentarios" filled type="textarea" label="comentarios" clearable />
                 </div>
                 <div class="col flex flex-center">
-                  <q-btn color="white" text-color="black" label="Guardar" icon="save" />
+
+                  <q-badge color="secondary">
+                    Avance: {{ progress * 10 }} %
+                  </q-badge>
+
+                  <q-slider v-model="progress" color="deep-orange" markers :marker-labels="fnMarkerLabel" :min="0"
+                    :max="10" />
+
                 </div>
                 <div class="col flex flex-center">
-                  <q-btn color="white" text-color="black" label="Guardar" icon="save" />
+                  <q-btn color="white" text-color="black" label="Guardar" icon="save" @click=agregarAvance() />
                 </div>
               </div>
 
             </div>
-
 
           </div>
           <q-separator vertical inset />
@@ -113,16 +121,39 @@ export default {
 
     const filterOptions = ref(optionsIntegration)
 
+    const progress = ref(3)
+
+    // get date of today now
+
+    var today = new Date()
+
+    const dd = String(today.getDate()).padStart(2, '0')
+    const mm = String(today.getMonth() + 1).padStart(2, '0') // January is 0!
+    const yyyy = today.getFullYear()
+
+    today = yyyy + '/' + mm + '/' + dd
+
+    // sumar 1 dia a la fecha de hoy
+
+    var endDay = new Date(today)
+    endDay.setDate(endDay.getDate() + 5)
+
+    const dd2 = String(endDay.getDate()).padStart(2, '0')
+    const mm2 = String(endDay.getMonth() + 1).padStart(2, '0') // January is 0!
+    const yyyy2 = endDay.getFullYear()
+
+    endDay = yyyy2 + '/' + mm2 + '/' + dd2
 
     return {
       integracionesStore,
       modelOptionsIntegration: ref([]),
       filterOptions,
-      model: ref({ from: '2020/07/08', to: '2020/07/17' }),
+      model: ref({ from: today, to: endDay }),
       dialog: ref(false),
       maximizedToggle: ref(true),
       comentarios: ref(''),
-
+      fnMarkerLabel: val => `${10 * val}%`,
+      progress,
 
 
       createValue(val, done) {
@@ -171,6 +202,26 @@ export default {
 
     }
   },
+
+  methods: {
+
+
+    agregarAvance() {
+
+      const payload = {
+        account_txa: this.integracionesStore.account_txa,
+        dates: this.model,
+        comment: this.comentarios,
+        progress: this.progress
+      }
+
+      this.integracionesStore.addAdvanceIntegration(payload)
+
+    },
+
+
+  },
+
   components: {
     'historial-integracion': require('./historial-integracion-client.vue').default,
   },

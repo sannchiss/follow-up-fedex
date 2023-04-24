@@ -1,7 +1,6 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
 
-    {{ account_txa }}
 
     <q-dialog v-model="cuentasStore.showDialogInfo">
       <q-card style="width: 500px; max-width: 80vw;">
@@ -73,14 +72,6 @@ import { useCuentasStore } from 'src/stores/cuentas/cuentas-store';
 
 export default {
 
-  props: {
-    account_txa: {
-      type: String,
-      required: true
-    }
-  },
-
-
 
   setup() {
 
@@ -88,8 +79,6 @@ export default {
 
     // get date today format dd/mm/yyyy
     let date = new Date().toISOString().substr(0, 10);
-
-
 
     return {
       modality: ref(''),

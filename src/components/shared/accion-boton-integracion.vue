@@ -66,6 +66,8 @@ export default {
         click: () => {
           integracionesStore.dialogoAvance = true
 
+
+
         }
       },
       {
