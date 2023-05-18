@@ -18,10 +18,10 @@
       <!-- drawer content -->
       <q-list>
         <q-item-label header>
-          Follow up
+          <div class="text-h6">Menu</div>
         </q-item-label>
 
-        <q-item clickable v-for="link in linksList" :key="link.title" :to="link.to">
+        <q-item clickable v-ripple v-for="link in linksList" :key="link.id" :to="link.to">
           <q-item-section avatar>
             <q-icon :name="link.icon" />
           </q-item-section>
@@ -58,31 +58,51 @@
 <script>
 import { ref } from 'vue'
 
-const linksList = [{
-  title: 'DashBoard',
-  caption: 'dashboard.dev',
-  icon: 'dashboard',
-  to: '/dashboard'
-},
-{
-  title: 'Cuentas',
-  caption: 'cuentas.dev',
-  icon: 'account_balance',
-  to: '/cuentas'
-},
-{
-  title: 'Integraciones',
-  caption: 'integraciones.dev',
-  icon: 'integration_instructions',
-  to: '/integraciones'
-},
-{
-  title: 'Login',
-  caption: 'login.dev',
-  icon: 'login',
-  to: '/login'
-}
+import { useRouter, useRoute } from 'vue-router'
 
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithCredential,
+  signInWithPopup
+} from '@firebase/auth'
+
+const router = useRouter()
+
+const linksList = [
+  {
+    id: 1,
+    title: 'DashBoard',
+    caption: 'dashboard.dev',
+    icon: 'dashboard',
+    to: '/dashboard'
+
+
+  },
+  {
+    id: 2,
+    title: 'Cuentas',
+    caption: 'cuentas.dev',
+    icon: 'account_balance',
+    to: '/cuentas'
+  },
+  {
+    id: 3,
+    title: 'Integraciones',
+    caption: 'integraciones.dev',
+    icon: 'integration_instructions',
+    to: '/integraciones'
+  },
+  {
+    id: 4,
+    title: 'Logout',
+    caption: 'logout.dev',
+    icon: 'logout',
+    to: '/logout'
+
+  }
 ]
 
 
@@ -90,12 +110,19 @@ export default {
   setup() {
     const leftDrawerOpen = ref(false)
 
+    //logout funtion google
+    const logout = async () => {
+      await auth.signOut()
+      router.push('/login')
+    }
+
     return {
       leftDrawerOpen,
       linksList,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },
+      logout
     }
   }
 }

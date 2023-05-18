@@ -1,7 +1,7 @@
 <template>
   <div class="q-mt-lg q-mr-sm">
-    <q-table flat bordered title="Integraciones" :rows="integracionesStore.integrations" :columns="columns"
-      row-key="company" :filter="filter">
+    <q-table flat bordered title="Integraciones" :pagination="InitialPagination" :rows="integracionesStore.integrations"
+      :columns="columns" row-key="company" :filter="filter">
 
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -32,17 +32,21 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%">
-
-            <accion-boton-integracion :account_txa="props.row.account_txa" @openInfo="openInfo" />
-
+            <div class="q-pa-md example-row-equal-width">
+              <div class="row">
+                <div class="col">
+                  <accion-boton-integracion :account_txa="props.row.account_txa" @openInfo="openInfo" />
+                </div>
+                <div class="col">
+                </div>
+              </div>
+            </div>
           </q-td>
         </q-tr>
-
-
       </template>
-
     </q-table>
     <avance-dialogo />
+    <envio-ficha-dialogo />
   </div>
 </template>
 
@@ -50,7 +54,8 @@
 
 import { useIntegracionesStore } from 'src/stores/integraciones/integraciones-store'
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+
 
 
 
@@ -86,6 +91,8 @@ export default {
     const integracionesStore = useIntegracionesStore()
     const $q = useQuasar()
 
+
+
     function openInfo(account_txa) {
 
       const data = this.integracionesStore.getFichaCliente(account_txa)
@@ -110,11 +117,44 @@ export default {
 
     return {
 
+      InitialPagination: {
+        sortBy: 'name',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10,
+        rowsPerPageOptions: [5, 10, 15, 30, 50, 100],
+        // optional, if you want to show the footer
+        paginationLabel: 'Rows per page',
+        // optional, if you want to show the footer page count
+        pagination: {
+          label: 'Rows per page',
+          // optional
+          // first: 'First',
+          // last: 'Last',
+          // prev: 'Prev',
+          // next: 'Next',
+          // page: 'Page',
+          // of: 'of',
+          // showing: 'Showing',
+          // to: 'to',
+          // of: 'of',
+          // results: results => results > 1 ? `results` : `result`,
+          // optional, if you want to override the displayed text for the selected rows per page
+          // pageLabel: '{0}-{1} of {2}',
+          // optional, if you want to override the displayed text for the selected rows per page
+          // itemsPerPageOptions: [10, 20, 30, 40, 50, 100],
+          // optional, if you want to override the displayed text for the selected rows per page
+          // itemsPerPageLabel: 'Rows per page',
+          // optional, if you want to override the displayed text for the selected rows per page
+          // itemsPerPage: 10
+        }
+      },
+
       columns,
       rows,
       filter,
       integracionesStore,
-      openInfo
+      openInfo,
 
     }
   },
@@ -131,12 +171,13 @@ export default {
   mounted() {
     this.integracionesStore.getIntegrations()
 
-    console.log('integracionesStore', this.integracionesStore.getIntegrations)
+    console.log('mounted', this.integracionesStore.getIntegrations())
 
   },
   components: {
     'accion-boton-integracion': require('../shared/accion-boton-integracion.vue').default,
     'avance-dialogo': require('../dialogs/avance-client.vue').default,
+    'envio-ficha-dialogo': require('../dialogs/ficha-avance-client.vue').default,
 
   }
 

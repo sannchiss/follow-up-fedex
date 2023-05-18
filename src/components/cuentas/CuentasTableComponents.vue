@@ -5,8 +5,6 @@
 
   <DialogInfoClient />
 
-
-
   <div class="q-pa-sm">
     <q-table v-model:selected="selected" dense :pagination="initialPagination" virtual-scroll flat
       :virtual-scroll-sticky-size-start="48" :columns="columns" :filter="filter" :grid="$q.screen.xs"
@@ -65,7 +63,6 @@ import {
   Notify
 } from 'quasar'
 
-let dblocal = new Localbase("db");
 
 const columns = [{
   name: 'name',

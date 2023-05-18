@@ -1,16 +1,13 @@
 <template>
   <q-dialog v-model="integracionesStore.dialogoAvance" full-width>
     <q-card>
-      <q-card-section style="background-color:darkgrey;">
-        <div class="text-h6">Integracion avance {{ integracionesStore.account_txa }}</div>
-
-        <!--add closed buttom direction left-->
-        <q-btn flat round dense icon="close" class="q-mr-md" @click="integracionesStore.dialogoAvance = false" />
-
-
+      <q-card-section style="background-color:rgb(31, 111, 185);">
+        <div class="text-h6 text-white">Integracion avance {{ integracionesStore.account_txa }}</div>
       </q-card-section>
 
-      <q-card-section class="q-pt-none">
+      <q-separator />
+
+      <q-card-section class="q-pt-none scroll" style="max-height:70vh">
 
         <div class="row">
           <div class="col-12 col-md-3">
@@ -48,11 +45,12 @@
                 <div class="col flex flex-center">
 
                   <q-badge color="secondary">
-                    Avance: {{ progress * 10 }} %
+                    Avance: {{ integracionesStore.maxProgress * 10 }} %
                   </q-badge>
 
-                  <q-slider v-model="progress" color="deep-orange" markers :marker-labels="fnMarkerLabel" :min="0"
-                    :max="10" />
+
+                  <q-slider v-model="integracionesStore.maxProgress" color="deep-orange" markers
+                    :marker-labels="fnMarkerLabel" :min="0" :max="10" />
 
                 </div>
                 <div class="col flex flex-center">
@@ -73,8 +71,9 @@
 
       </q-card-section>
 
-      <q-card-actions align="right" class="bg-white text-teal">
-        <q-btn flat label="OK" v-close-popup />
+      <q-separator />
+      <q-card-actions align="right" class="bg-primary">
+        <q-btn flat label="Decline" class="bg-red" color="white" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -121,7 +120,7 @@ export default {
 
     const filterOptions = ref(optionsIntegration)
 
-    const progress = ref(3)
+    const progress = ref(2)
 
     // get date of today now
 
@@ -144,16 +143,18 @@ export default {
 
     endDay = yyyy2 + '/' + mm2 + '/' + dd2
 
+
+
     return {
       integracionesStore,
       modelOptionsIntegration: ref([]),
       filterOptions,
       model: ref({ from: today, to: endDay }),
       dialog: ref(false),
-      maximizedToggle: ref(true),
       comentarios: ref(''),
       fnMarkerLabel: val => `${10 * val}%`,
       progress,
+
 
 
       createValue(val, done) {

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import Localbase from 'localbase'
 import { Notify } from 'quasar'
+import { dbfirebase } from "/src/firebase/index";
 
 import {
   collection,
@@ -14,10 +15,9 @@ import {
   getDoc
 } from "firebase/firestore";
 
-import { dbfirebase, auth } from "src/firebase/index";
 
 
-let dblocal = new Localbase("db");
+//let dblocal = new Localbase("db");
 
 export const useCuentasStore = defineStore('cuentas', {
   state: () => ({

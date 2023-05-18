@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { dbfirebase } from "/src/firebase/index";
 
 import {
   collection,
@@ -11,7 +12,6 @@ import {
   orderBy,
   getDoc
 } from "firebase/firestore";
-import { dbfirebase, auth } from "src/firebase/index";
 
 export const useIntegracionesStore = defineStore('integraciones', {
   state: () => ({
@@ -20,8 +20,11 @@ export const useIntegracionesStore = defineStore('integraciones', {
     searchIntegration: '',
     historyIntegration: [],
     dialogoAvance: false,
+    dialogoFichaCliente: false,
     account_txa: '',
     spinnerComment: true,
+    progress: [],
+    porcentAdvance: 0,
 
   }),
 
@@ -42,20 +45,19 @@ export const useIntegracionesStore = defineStore('integraciones', {
 
     ordenarPorProgreso: (state) => {
 
-      if (state.historyIntegration.length == 0) {
-        return state.historyIntegration
-      }
-      else {
-
-
-        return state.historyIntegration.sort((a, b) => {
-          state.spinnerComment = false
-          return b.progress - a.progress
-        })
-
-      }
+      return state.historyIntegration.sort((a, b) => {
+        return b.progress - a.progress
+      })
 
     },
+
+    // max progress
+    maxProgress: (state) => {
+      return Math.max(...state.progress) / 10
+    },
+
+
+
 
 
 
@@ -84,14 +86,52 @@ export const useIntegracionesStore = defineStore('integraciones', {
     async getIntegrations() {
 
       this.integrations = []
+      this.historyIntegration = []
 
       // get data from firebase
       const querySnapshot = await getDocs(collection(dbfirebase, "client_file_gts"));
-      querySnapshot.forEach((doc) => {
-        //console.log("La data", doc.data());
-        this.integrations.push(doc.data());
-      });
 
+
+      // join with integrations
+      querySnapshot.forEach((doc) => {
+
+        this.integrations.push(doc.data())
+
+        // get data from integrations
+        /*         const colRef = collection(dbfirebase, "client_file_gts/" + doc.id + "/integrations")
+
+                getDocs(colRef).then((querySnapshot) => {
+
+                  querySnapshot.forEach((doc) => {
+
+                    this.historyIntegration.push(
+                      {
+                        id: doc.id,
+                        account_txa: doc.data().account_txa,
+                        dates: doc.data().dates,
+                        comment: doc.data().comment,
+                        progress: doc.data().progress,
+                      }
+                    )
+
+                  })
+
+                }
+                ) */
+
+
+      }
+      )
+
+
+
+
+    },
+
+    getProgress(account_txa) {
+      //return state.progress
+
+      this.porcentAdvance = 10
     },
 
     async getFichaCliente(id) {
@@ -101,8 +141,6 @@ export const useIntegracionesStore = defineStore('integraciones', {
       const q = query(collection(dbfirebase, "client_file_gts"), where("account_txa", "==", id));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-
-
 
         data.push(doc.data())
       }
@@ -114,17 +152,19 @@ export const useIntegracionesStore = defineStore('integraciones', {
 
 
 
-    async getHistoryIntegrations() {
+    async getHistoryIntegrations(account_txa) {
 
-      /*  return this.integrations.filter((integration) => {
-         return integration.account_txa == this.account_txa
-       }) */
+      const account_txaNow = this.account_txa == '' ? account_txa : this.account_txa
+
+      console.log("account_txa", account_txaNow)
+
 
       this.historyIntegration = []
+      this.progress = []
       this.spinnerComment = true
 
 
-      const q = query(collection(dbfirebase, "client_file_gts"), where("account_txa", "==", this.account_txa));
+      const q = query(collection(dbfirebase, "client_file_gts"), where("account_txa", "==", account_txaNow));
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
@@ -147,12 +187,37 @@ export const useIntegracionesStore = defineStore('integraciones', {
               }
             )
 
+            this.progress.push(doc.data().progress)
+
+
           })
 
         }
         )
 
+
+
+
       })
+
+      setTimeout(() => {
+
+        this.spinnerComment = false
+
+      }
+        , 100)
+
+
+
+      /* // value max progress in historyIntegration
+      this.progress = []
+      this.historyIntegration.forEach((item) => {
+        console.log("item", item.progress)
+        this.progress.push(item.progress)
+      }
+      ) */
+
+      console.log("this.progress", this.progress)
 
 
 
@@ -162,7 +227,6 @@ export const useIntegracionesStore = defineStore('integraciones', {
 
       this.historyIntegration.splice(0, this.historyIntegration.length)
 
-      console.log("data123", this.account_txa)
 
       const q = query(collection(dbfirebase, "client_file_gts"), where("account_txa", "==", this.account_txa));
 
@@ -211,13 +275,7 @@ export const useIntegracionesStore = defineStore('integraciones', {
       })
 
 
-    }
-
-
-
-
-
-
+    },
 
 
 
