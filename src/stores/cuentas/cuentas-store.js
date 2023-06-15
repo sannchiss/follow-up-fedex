@@ -24,7 +24,20 @@ export const useCuentasStore = defineStore('cuentas', {
     file: '',
     cuentas: [],
     loading: false,
-    listado: [],
+    listado: [
+      {
+        name: 'Cuenta 1',
+        cuentaTxa: '123456',
+        cuentaGts: '123456',
+        rut: '12345678-9',
+        comuna: 'Santiago',
+        direccion: 'Av. Providencia 123',
+
+      }
+
+
+
+    ],
     progress: 0,
     showDialogInfo: false,
     infoClient: [],
@@ -112,7 +125,9 @@ export const useCuentasStore = defineStore('cuentas', {
           name: element[2],
           cuentaTxa: element[0],
           cuentaGts: element[3],
-          rut: element[1]
+          rut: element[1],
+          comuna: element[4],
+          direccion: element[5],
         })
 
         count++

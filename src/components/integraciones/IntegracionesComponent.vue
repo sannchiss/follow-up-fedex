@@ -1,7 +1,24 @@
 <template>
   <div class="q-mt-lg q-mr-sm">
-    <q-table flat bordered title="Integraciones" :pagination="InitialPagination" :rows="integracionesStore.integrations"
-      :columns="columns" row-key="company" :filter="filter">
+    <q-table
+      flat
+      bordered
+      title="Integraciones"
+      v-model:pagination="pagination"
+      :rows="integracionesStore.integrations"
+      :columns="columns"
+      row-key="company"
+      :filter="filter"
+    >
+      <template v-slot:top-left>
+        <q-btn
+          color="primary"
+          icon-right="archive"
+          label="Export to csv"
+          no-caps
+          @click="exportTableToExcel"
+        />
+      </template>
 
       <template v-slot:header="props">
         <q-tr :props="props">
@@ -13,7 +30,13 @@
       </template>
 
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Search"
+        >
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -23,8 +46,15 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td auto-width>
-            <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand"
-              :icon="props.expand ? 'remove' : 'add'" class="expand-btn" />
+            <q-btn
+              size="sm"
+              color="accent"
+              round
+              dense
+              @click="props.expand = !props.expand"
+              :icon="props.expand ? 'remove' : 'add'"
+              class="expand-btn"
+            />
           </q-td>
           <q-td v-for="col in props.cols" :key="col.name" :props="props">
             {{ col.value }}
@@ -35,10 +65,12 @@
             <div class="q-pa-md example-row-equal-width">
               <div class="row">
                 <div class="col">
-                  <accion-boton-integracion :account_txa="props.row.account_txa" @openInfo="openInfo" />
+                  <accion-boton-integracion
+                    :account_txa="props.row.account_txa"
+                    @openInfo="openInfo"
+                  />
                 </div>
-                <div class="col">
-                </div>
+                <div class="col"></div>
               </div>
             </div>
           </q-td>
@@ -51,138 +83,132 @@
 </template>
 
 <script>
-
-import { useIntegracionesStore } from 'src/stores/integraciones/integraciones-store'
-import { useQuasar } from 'quasar'
-import { computed, ref } from 'vue'
-
-
-
+import { useIntegracionesStore } from "src/stores/integraciones/integraciones-store";
+import { useQuasar, exportFile } from "quasar";
+import { ref } from "vue";
 
 const columns = [
   {
-    name: 'name',
+    name: "name",
     required: true,
-    label: 'Nombre Empresa',
-    align: 'left',
-    field: row => row.company,
-    format: val => `${val}`,
-    sortable: true
+    label: "Nombre Empresa",
+    align: "left",
+    field: (row) => row.company,
+    format: (val) => `${val}`,
+    sortable: true,
   },
-  { name: 'Cuenta GTS', align: 'center', label: 'Cuenta GTS', field: 'account_gts', sortable: true },
-  { name: 'Cuenta TXA', label: 'Cuenta TXA', field: 'account_txa', sortable: true },
-  { name: 'Estatus', label: 'Estatus', field: 'estatus' },
-]
+  {
+    name: "Cuenta GTS",
+    align: "center",
+    label: "Cuenta GTS",
+    field: "account_gts",
+    sortable: true,
+  },
+  {
+    name: "Cuenta TXA",
+    label: "Cuenta TXA",
+    field: "account_txa",
+    sortable: true,
+  },
+  { name: "Estatus", label: "Estatus", field: "estatus" },
+];
 
-const rows = []
-
+const rows = [];
 
 export default {
   props: {
     account_txa: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
-
   setup() {
+    //declare integracionesStore global
 
-    const integracionesStore = useIntegracionesStore()
-    const $q = useQuasar()
+    const integracionesStore = useIntegracionesStore();
 
+    const $q = useQuasar();
 
+    const pagination = ref({
+      sortBy: "desc",
+      descending: false,
+      page: 2,
+      rowsPerPage: 10,
+      // rowsNumber: xx if getting data from a server
+      // export to excel
+      all: "Todas",
+    });
 
     function openInfo(account_txa) {
-
-      const data = this.integracionesStore.getFichaCliente(account_txa)
+      const data = this.integracionesStore.getFichaCliente(account_txa);
 
       // loop promise
       data.then((res) => {
-        console.log('openInfo', res[0])
+        console.log("openInfo", res[0]);
 
         $q.dialog({
-          title: 'Integración',
+          title: "Integración",
           message: res[0].info_client,
-          persistent: true
-        })
-
-
-      })
-
-
+          persistent: true,
+        });
+      });
     }
 
-    const filter = ref('')
+    const filter = ref("");
+
+    function exportTableToExcel() {
+      const data = this.integracionesStore.integrations;
+
+      const columns = [
+        { label: "Nombre Empresa", value: "company" },
+        { label: "Cuenta GTS", value: "account_gts" },
+        { label: "Cuenta TXA", value: "account_txa" },
+        { label: "Estatus", value: "estatus" },
+      ];
+
+      const exportTable = () => {
+        exportFile(columns, data, "integraciones", {
+          // only for .xlsx
+          sheetName: "My custom name",
+          documentProperties: {
+            title: "My title",
+            subject: "My subject",
+            // 'Created Date' is available but optional
+            createdDate: new Date(2017, 0, 1),
+          },
+        });
+      };
+
+      exportTable();
+    }
 
     return {
-
-      InitialPagination: {
-        sortBy: 'name',
-        descending: false,
-        page: 1,
-        rowsPerPage: 10,
-        rowsPerPageOptions: [5, 10, 15, 30, 50, 100],
-        // optional, if you want to show the footer
-        paginationLabel: 'Rows per page',
-        // optional, if you want to show the footer page count
-        pagination: {
-          label: 'Rows per page',
-          // optional
-          // first: 'First',
-          // last: 'Last',
-          // prev: 'Prev',
-          // next: 'Next',
-          // page: 'Page',
-          // of: 'of',
-          // showing: 'Showing',
-          // to: 'to',
-          // of: 'of',
-          // results: results => results > 1 ? `results` : `result`,
-          // optional, if you want to override the displayed text for the selected rows per page
-          // pageLabel: '{0}-{1} of {2}',
-          // optional, if you want to override the displayed text for the selected rows per page
-          // itemsPerPageOptions: [10, 20, 30, 40, 50, 100],
-          // optional, if you want to override the displayed text for the selected rows per page
-          // itemsPerPageLabel: 'Rows per page',
-          // optional, if you want to override the displayed text for the selected rows per page
-          // itemsPerPage: 10
-        }
-      },
-
+      exportTableToExcel,
+      pagination,
       columns,
       rows,
       filter,
       integracionesStore,
       openInfo,
-
-    }
+    };
   },
 
   data() {
-    return {
-
-
-    }
-
-
+    return {};
   },
 
   mounted() {
-    this.integracionesStore.getIntegrations()
-
-    console.log('mounted', this.integracionesStore.getIntegrations())
-
+    this.integracionesStore.getIntegrations();
   },
   components: {
-    'accion-boton-integracion': require('../shared/accion-boton-integracion.vue').default,
-    'avance-dialogo': require('../dialogs/avance-client.vue').default,
-    'envio-ficha-dialogo': require('../dialogs/ficha-avance-client.vue').default,
-
-  }
-
-
-}
+    "accion-boton-integracion":
+      require("../shared/accion-boton-integracion.vue").default,
+    "avance-dialogo": require("../dialogs/avance-client.vue").default,
+    "envio-ficha-dialogo": require("../dialogs/ficha-avance-client.vue")
+      .default,
+  },
+};
 </script>
 
 <style lang="scss">
@@ -195,7 +221,5 @@ export default {
   &.q-btn--flat {
     background-color: transparent;
   }
-
-
 }
 </style>
