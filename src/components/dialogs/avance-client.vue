@@ -92,7 +92,9 @@
           <q-separator vertical inset />
 
           <div class="col-12 col-md-4">
-            <historial-integracion :avance="row.avance" />
+            <historial-integracion
+              :listaAvance="this.integracionesStore.rowAvance"
+            />
           </div>
         </div>
       </q-card-section>

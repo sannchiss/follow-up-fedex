@@ -12,7 +12,7 @@
       <q-separator spaced />
       <q-item-label header>Lista avance</q-item-label>
 
-      {{ avance }}
+      {{ listaAvance }}
 
       <q-scroll-area
         :thumb-style="thumbStyle"
@@ -23,7 +23,7 @@
           <q-spinner-comment color="secondary" size="5em" />
         </div> -->
 
-        <q-item v-for="item in avance" :key="item.id">
+        <q-item v-for="item in listaAvance.avance" :key="item.id">
           <q-item-section top avatar>
             <q-avatar>
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
@@ -60,7 +60,7 @@ import { useIntegracionesStore } from "src/stores/integraciones/integraciones-st
 
 export default {
   props: {
-    avance: {
+    listaAvance: {
       type: Object,
       required: true,
     },
