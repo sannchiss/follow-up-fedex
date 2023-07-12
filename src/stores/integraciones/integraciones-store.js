@@ -15,6 +15,7 @@ import {
 
 export const useIntegracionesStore = defineStore("integraciones", {
   state: () => ({
+    rowAvance: [],
     integrations: [],
     searchIntegration: "",
     historyIntegration: [],
@@ -24,6 +25,11 @@ export const useIntegracionesStore = defineStore("integraciones", {
     spinnerComment: true,
     progress: [],
     porcentAdvance: 0,
+
+
+    search: "",
+    rows: [],
+
   }),
 
   getters: {
@@ -32,10 +38,25 @@ export const useIntegracionesStore = defineStore("integraciones", {
       } */
 
     // get history of integrations
-    getItemIntegracion: (state) => {
-      return state.integrations.filter((integration) => {
-        return integration.account_txa == state.account_txa;
-      });
+    getItemIntegracion(state) {
+
+      if (state.search == '') {
+        return state.rows
+      }
+      else {
+        return state.rows.filter((row) => {
+          return row.empresa.toLowerCase().includes(state.search.toLowerCase()) ||
+            row.cuentaTxa.toLowerCase().includes(state.search.toLowerCase()) ||
+            row.cuentaGts.toLowerCase().includes(state.search.toLowerCase()) ||
+            row.rut.toLowerCase().includes(state.search.toLowerCase()) ||
+            row.estado_integracion.toLowerCase().includes(state.search.toLowerCase())
+
+        }
+        )
+      }
+
+
+
     },
 
     ordenarPorProgreso: (state) => {
@@ -46,7 +67,25 @@ export const useIntegracionesStore = defineStore("integraciones", {
 
     // max progress
     maxProgress: (state) => {
-      return Math.max(...state.progress) / 10;
+      // get porcent max state.rowAvance.avance.porcentaje_avance
+      const lista = []
+      state.rowAvance.avance.map((item) => {
+        lista.push(item.porcentaje_avance)
+      }
+      )
+
+      // returnar el maximo de la lista
+      return Math.max.apply(
+        Math,
+        lista.map(function (o) {
+          return o / 10;
+        }
+        )
+      );
+
+
+
+
     },
 
     /* integrationsFilter(state) {
@@ -81,27 +120,7 @@ export const useIntegracionesStore = defineStore("integraciones", {
       querySnapshot.forEach((doc) => {
         this.integrations.push(doc.data());
 
-        // get data from integrations
-        /*         const colRef = collection(dbfirebase, "client_file_gts/" + doc.id + "/integrations")
 
-                getDocs(colRef).then((querySnapshot) => {
-
-                  querySnapshot.forEach((doc) => {
-
-                    this.historyIntegration.push(
-                      {
-                        id: doc.id,
-                        account_txa: doc.data().account_txa,
-                        dates: doc.data().dates,
-                        comment: doc.data().comment,
-                        progress: doc.data().progress,
-                      }
-                    )
-
-                  })
-
-                }
-                ) */
       });
     },
 

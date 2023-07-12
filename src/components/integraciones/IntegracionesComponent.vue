@@ -1,84 +1,116 @@
 <template>
-  <div class="q-mt-lg q-mr-sm">
-    <q-table
-      flat
-      bordered
-      title="Integraciones"
-      v-model:pagination="pagination"
-      :rows="integracionesStore.integrations"
-      :columns="columns"
-      row-key="company"
-      :filter="filter"
-    >
-      <template v-slot:top-left>
-        <q-btn
-          color="primary"
-          icon-right="archive"
-          label="Export to csv"
-          no-caps
-          @click="exportTableToExcel"
-        />
-      </template>
-
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-      </template>
-
-      <template v-slot:top-right>
-        <q-input
-          borderless
+  <div class="q-pa-md">
+    <div class="q-gutter-y-md" style="max-width: 1024px">
+      <q-card>
+        <q-tabs
+          v-model="tab"
           dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
+          class="bg-grey-2 text-grey-7"
+          active-color="primary"
+          indicator-color="purple"
+          align="justify"
         >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
+          <q-tab name="integracion_gts" label="Integraciones GTS Online" />
+          <q-tab
+            name="integraciones_conectores_ecommerce"
+            label="Integraciones Conectores Ecommerce"
+          />
+        </q-tabs>
 
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td auto-width>
-            <q-btn
-              size="sm"
-              color="accent"
-              round
-              dense
-              @click="props.expand = !props.expand"
-              :icon="props.expand ? 'remove' : 'add'"
-              class="expand-btn"
-            />
-          </q-td>
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%">
-            <div class="q-pa-md example-row-equal-width">
-              <div class="row">
-                <div class="col">
-                  <accion-boton-integracion
-                    :account_txa="props.row.account_txa"
-                    @openInfo="openInfo"
-                  />
-                </div>
-                <div class="col"></div>
-              </div>
+        <q-tab-panels v-model="tab" animated class="bg-white-grey-5 text-black">
+          <q-tab-panel name="integracion_gts">
+            <!--inicio contenido tab integraciones GTS-->
+            <div class="row">
+              <buscador-integracion />
             </div>
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
-    <avance-dialogo />
-    <envio-ficha-dialogo />
+            <div class="q-mt-lg q-mr-sm">
+              <!--add q-list-->
+              <q-list bordered separator>
+                <q-item v-for="row in integraciones" :key="row.empresa">
+                  <q-item-section avatar>
+                    <q-icon color="primary" name="business" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ row.empresa }}</q-item-label>
+                    <q-item-label caption>{{ row.cuentaTxa }}</q-item-label>
+                  </q-item-section>
+
+                  <q-item-section center>
+                    <div class="q-pa-md" style="max-width: 350px">
+                      <q-expansion-item
+                        class="shadow-1 overflow-hidden"
+                        style="border-radius: 30px"
+                        icon="explore"
+                        label="Resumen"
+                        header-class="bg-primary text-white"
+                        expand-icon-class="text-white"
+                      >
+                        <q-card>
+                          <q-card-section>
+                            <div
+                              v-for="content in row.avance"
+                              :key="content.id"
+                            >
+                              {{ content.comentarios }}
+                              {{ content.porcentaje_avance }}
+                            </div>
+                          </q-card-section>
+                          <q-card-actions align="right">
+                            <q-btn
+                              flat
+                              round
+                              color="red"
+                              icon="add_task"
+                              @click="avance(row)"
+                            />
+                            <acciones-avance :row="row" />
+
+                            <acciones-mail />
+                            <q-btn flat round color="primary" icon="share" />
+                          </q-card-actions>
+                        </q-card>
+                      </q-expansion-item>
+                    </div>
+                  </q-item-section>
+
+                  <q-item-section side>
+                    <div class="text-grey-8 q-gutter-xs">
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="edit"
+                        @click="edit(row)"
+                        class="q-mr-sm"
+                      />
+                      <q-btn
+                        flat
+                        round
+                        dense
+                        icon="delete"
+                        @click="remove(row)"
+                        class="q-mr-sm"
+                      />
+                    </div>
+                  </q-item-section>
+                </q-item>
+
+                <q-separator spaced />
+              </q-list>
+
+              <avance-dialogo />
+              <envio-ficha-dialogo />
+            </div>
+
+            <!--fin de contenido de integraciones GTS-->
+          </q-tab-panel>
+
+          <q-tab-panel name="integraciones_conectores_ecommerce">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card>
+    </div>
   </div>
 </template>
 
@@ -87,37 +119,20 @@ import { useIntegracionesStore } from "src/stores/integraciones/integraciones-st
 import { useQuasar, exportFile } from "quasar";
 import { ref } from "vue";
 
-const columns = [
-  {
-    name: "name",
-    required: true,
-    label: "Nombre Empresa",
-    align: "left",
-    field: (row) => row.company,
-    format: (val) => `${val}`,
-    sortable: true,
-  },
-  {
-    name: "Cuenta GTS",
-    align: "center",
-    label: "Cuenta GTS",
-    field: "account_gts",
-    sortable: true,
-  },
-  {
-    name: "Cuenta TXA",
-    label: "Cuenta TXA",
-    field: "account_txa",
-    sortable: true,
-  },
-  { name: "Estatus", label: "Estatus", field: "estatus" },
-];
+import handleAdvanceCompany from "src/composables/HandleAdvanceCompany";
 
-const rows = [];
+const { getListAdvanceCompany } = handleAdvanceCompany();
 
 export default {
+  data() {
+    const rows = [];
+    return {
+      rows,
+    };
+  },
+
   props: {
-    account_txa: {
+    cuentaTxa: {
       type: String,
       required: true,
     },
@@ -129,16 +144,6 @@ export default {
     const integracionesStore = useIntegracionesStore();
 
     const $q = useQuasar();
-
-    const pagination = ref({
-      sortBy: "desc",
-      descending: false,
-      page: 2,
-      rowsPerPage: 10,
-      // rowsNumber: xx if getting data from a server
-      // export to excel
-      all: "Todas",
-    });
 
     function openInfo(account_txa) {
       const data = this.integracionesStore.getFichaCliente(account_txa);
@@ -157,55 +162,60 @@ export default {
 
     const filter = ref("");
 
-    function exportTableToExcel() {
-      const data = this.integracionesStore.integrations;
-
-      const columns = [
-        { label: "Nombre Empresa", value: "company" },
-        { label: "Cuenta GTS", value: "account_gts" },
-        { label: "Cuenta TXA", value: "account_txa" },
-        { label: "Estatus", value: "estatus" },
-      ];
-
-      const exportTable = () => {
-        exportFile(columns, data, "integraciones", {
-          // only for .xlsx
-          sheetName: "My custom name",
-          documentProperties: {
-            title: "My title",
-            subject: "My subject",
-            // 'Created Date' is available but optional
-            createdDate: new Date(2017, 0, 1),
-          },
-        });
-      };
-
-      exportTable();
-    }
-
     return {
-      exportTableToExcel,
-      pagination,
-      columns,
-      rows,
-      filter,
       integracionesStore,
       openInfo,
+      tab: ref("integracion_gts"),
     };
   },
 
-  data() {
-    return {};
+  methods: {
+    async getListAdvance() {
+      const data = await getListAdvanceCompany();
+      return data;
+    },
+
+    avance(row) {
+      console.log("row", row);
+
+      //send param row to dialog
+      this.integracionesStore.rowAvance = row;
+
+      this.integracionesStore.dialogoAvance = true;
+    },
   },
 
   mounted() {
-    this.integracionesStore.getIntegrations();
+    ///this.integracionesStore.getIntegrations();
+
+    this.getListAdvance().then((res) => {
+      this.integracionesStore.rows = res;
+
+      console.log("res", this.rows);
+
+      //this.integracionesStore.setIntegrations(res);
+    });
   },
+
+  computed: {
+    integraciones: {
+      get() {
+        return this.integracionesStore.getItemIntegracion;
+      },
+    },
+  },
+
   components: {
-    "accion-boton-integracion":
-      require("../shared/accion-boton-integracion.vue").default,
-    "avance-dialogo": require("../dialogs/avance-client.vue").default,
+    /* "accion-boton-integracion":
+      require("../shared/accion-boton-integracion.vue").default, */
+    "acciones-avance": require("../dialogs/avance-client.vue").default,
     "envio-ficha-dialogo": require("../dialogs/ficha-avance-client.vue")
+      .default,
+
+    "buscador-integracion": require("../shared/buscador-integracion.vue")
+      .default,
+
+    "acciones-mail": require("../shared/acciones-mail-integraciones.vue")
       .default,
   },
 };

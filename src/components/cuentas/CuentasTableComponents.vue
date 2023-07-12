@@ -17,7 +17,7 @@
       :filter="filter"
       :grid="$q.screen.xs"
       :loading="cuentasStore.loading"
-      :rows="cuentasStore.listado"
+      :rows="rows ?? []"
       row-key="cuentaTxa"
       selection="single"
       title="Tabla de cuentas"
@@ -75,15 +75,17 @@
 <script>
 import { ref } from "vue";
 import { useCuentasStore } from "src/stores/cuentas/cuentas-store";
+import handleAccountCompany from "src/composables/HandleAccountCompany";
 import { Notify } from "quasar";
+
+const { getListCompany } = handleAccountCompany();
 
 const columns = [
   {
-    name: "name",
-    required: true,
+    name: "empresa",
     label: "Nombre Empresa",
     align: "left",
-    field: (row) => row.name,
+    field: "empresa",
     format: (val) => `${val}`,
     sortable: true,
     style: "width: 100px",
@@ -123,9 +125,15 @@ const columns = [
   },
 ];
 
-const rows = [];
-
 export default {
+  data() {
+    const rows = [];
+
+    return {
+      rows,
+    };
+  },
+
   setup() {
     const cuentasStore = useCuentasStore();
 
@@ -138,17 +146,16 @@ export default {
 
       initialPagination: {
         title: "Cuentas",
-        sortBy: "name",
+        sortBy: "empresa",
         descending: false,
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 20,
       },
 
       cuentasStore,
       selected: ref([]),
       filter: ref(""),
       columns,
-      rows,
     };
   },
 
@@ -159,8 +166,8 @@ export default {
         .writeText(
           this.selected
             .map(
-              ({ name, cuentaGts, cuentaTxa, comuna, direccion }) =>
-                `Empresa: ${name} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa} Comuna: ${comuna} Direccion: ${direccion}`
+              ({ empresa, cuentaGts, cuentaTxa, comuna, direccion }) =>
+                `Empresa: ${empresa} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa} Comuna: ${comuna} Direccion: ${direccion}`
             )
             .join("\n")
         )
@@ -168,7 +175,7 @@ export default {
           () => {
             console.log("Copied to clipboard");
 
-            console.log(this.selected[0].name);
+            console.log(this.selected[0].empresa);
             // if copy data to clipboard show notification
 
             // show notify if data selected
@@ -176,7 +183,7 @@ export default {
               Notify.create({
                 message:
                   "Copied " +
-                  this.selected[0].name +
+                  this.selected[0].empresa +
                   "" +
                   this.selected[0].cuentaGts +
                   "" +
@@ -205,8 +212,8 @@ export default {
         .writeText(
           this.selected
             .map(
-              ({ name, cuentaGts, cuentaTxa }) =>
-                `Empresa: ${name} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa}`
+              ({ empresa, cuentaGts, cuentaTxa }) =>
+                `Empresa: ${empresa} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa}`
             )
             .join("\n")
         )
@@ -235,10 +242,25 @@ export default {
           }
         );
     },
+
+    async getListado() {
+      const list = await getListCompany();
+      return list;
+    },
   },
 
   mounted() {
     this.cuentasStore.listado = [];
+
+    // get getListCompany
+    this.getListado().then((res) => {
+      res.map((item) => {
+        //deleteListCompany(item.id)
+
+        // merge list_account to listado
+        this.rows.push(...item.list_account);
+      });
+    });
 
     // get items localstorage
     this.cuentasStore.listado = localStorage.getItem("cuentas");

@@ -3,7 +3,12 @@
     <q-card>
       <q-card-section style="background-color: rgb(31, 111, 185)">
         <div class="text-h6 text-white">
-          Integracion avance {{ integracionesStore.account_txa }}
+          Integracion avance:
+          {{
+            this.integracionesStore.rowAvance.cuentaTxa +
+            " Empresa: " +
+            this.integracionesStore.rowAvance.empresa
+          }}
         </div>
       </q-card-section>
 
@@ -87,7 +92,7 @@
           <q-separator vertical inset />
 
           <div class="col-12 col-md-4">
-            <historial-integracion />
+            <historial-integracion :avance="row.avance" />
           </div>
         </div>
       </q-card-section>
@@ -133,8 +138,8 @@ const optionsIntegration = [
 
 export default {
   props: {
-    account_txa: {
-      type: String,
+    row: {
+      type: Object,
       required: true,
     },
   },
@@ -143,8 +148,6 @@ export default {
     const integracionesStore = useIntegracionesStore();
 
     const filterOptions = ref(optionsIntegration);
-
-    const progress = ref(2);
 
     // get date of today now
 
@@ -175,7 +178,6 @@ export default {
       dialog: ref(false),
       comentarios: ref(""),
       fnMarkerLabel: (val) => `${10 * val}%`,
-      progress,
 
       createValue(val, done) {
         // Calling done(var) when new-value-mode is not set or "add", or done(var, "add") adds "var" content to the model
@@ -222,7 +224,7 @@ export default {
   methods: {
     agregarAvance() {
       const payload = {
-        account_txa: this.integracionesStore.account_txa,
+        cuentaTxa: this.integracionesStore.cuentaTxa,
         dates: this.model,
         comment: this.comentarios,
         progress: this.progress,
