@@ -171,9 +171,6 @@ export const useCuentasStore = defineStore('cuentas', {
 
 
 
-
-
-
       console.log('cuentasJson: ', formatCuentas)
 
       // dividir formatcuentas en 2 arrays

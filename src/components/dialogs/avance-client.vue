@@ -14,7 +14,7 @@
 
       <q-separator />
 
-      <q-card-section class="q-pt-none scroll" style="max-height: 70vh">
+      <q-card-section class="q-pt-none" style="max-height: 80vh">
         <div class="row">
           <div class="col-12 col-md-3">
             <div class="q-pa-md">
@@ -65,11 +65,11 @@
                 </div>
                 <div class="col flex flex-center">
                   <q-badge color="secondary">
-                    Avance: {{ integracionesStore.maxProgress * 10 }} %
+                    Ultimo Avance: {{ integracionesStore.maxProgress * 10 }} %
                   </q-badge>
 
                   <q-slider
-                    v-model="integracionesStore.maxProgress"
+                    v-model="progress"
                     color="deep-orange"
                     markers
                     :marker-labels="fnMarkerLabel"
@@ -89,12 +89,11 @@
               </div>
             </div>
           </div>
+
           <q-separator vertical inset />
 
           <div class="col-12 col-md-4">
-            <historial-integracion
-              :listaAvance="this.integracionesStore.rowAvance"
-            />
+            <historial-integracion :listaAvance="this.integracionesStore" />
           </div>
         </div>
       </q-card-section>
@@ -116,6 +115,10 @@
 <script>
 import { ref } from "vue";
 import { useIntegracionesStore } from "src/stores/integraciones/integraciones-store";
+import handleAdvanceCompany from "src/composables/HandleAdvanceCompany";
+
+const { updateAdvanceCompany, updatePorcentEstado, getListAdvanceCompany } =
+  handleAdvanceCompany();
 
 const optionsIntegration = [
   "Mail enviado al cliente con el para agendar video llamada",
@@ -144,6 +147,15 @@ export default {
       type: Object,
       required: true,
     },
+  },
+
+  data() {
+    const progressMax = ref(0);
+    const avanceLista = [];
+
+    return {
+      progressMax,
+    };
   },
 
   setup() {
@@ -177,7 +189,6 @@ export default {
       modelOptionsIntegration: ref([]),
       filterOptions,
       model: ref({ from: today, to: endDay }),
-      dialog: ref(false),
       comentarios: ref(""),
       fnMarkerLabel: (val) => `${10 * val}%`,
 
@@ -223,16 +234,78 @@ export default {
     };
   },
 
+  computed: {
+    progress: {
+      get() {
+        return this.integracionesStore.maxProgress;
+      },
+      set(val) {
+        this.progressMax = val;
+        console.log("value progress", this.progressMax);
+      },
+    },
+  },
+
   methods: {
-    agregarAvance() {
+    async agregarAvance() {
+      const realProgress =
+        this.progress > this.progressMax
+          ? this.progress * 10
+          : this.progressMax * 10;
+
+      const realEstado = realProgress == 100 ? "Finalizado" : "En Proceso";
+
       const payload = {
-        cuentaTxa: this.integracionesStore.cuentaTxa,
-        dates: this.model,
-        comment: this.comentarios,
-        progress: this.progress,
+        comentarios: this.comentarios,
+        estado: realEstado,
+        fecha: this.model,
+        porcentaje_avance: realProgress,
       };
 
-      this.integracionesStore.addAdvanceIntegration(payload);
+      const id = this.integracionesStore.rowAvance.id;
+
+      this.integracionesStore.rowAvance.avance.push(payload);
+
+      // update avance in supabase
+      try {
+        await updateAdvanceCompany(
+          this.integracionesStore.rowAvance.avance,
+          id
+        ).then(() => {
+          this.$q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Avance agregado correctamente",
+          });
+        });
+
+        this.comentarios = "";
+      } catch (error) {
+        console.log(error);
+      }
+
+      try {
+        await updatePorcentEstado(realProgress, realEstado, id).then(() => {
+          this.$q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Avance agregado correctamente",
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      try {
+        await getListAdvanceCompany().then((res) => {
+          this.integracionesStore.rows = res;
+          console.log("rows sannchisss-><<<", this.integracionesStore.rows);
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 

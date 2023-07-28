@@ -190,17 +190,40 @@ export default {
         return;
       } else {
         // get data form
+
+        // separate content textarea informacion by line
+        let informacionDesfrag = this.informacion.split("\n");
+        0;
+        // convert /t to space and convert to array
+        informacionDesfrag = informacionDesfrag.map((item) =>
+          item.replace(/\t/g, ":")
+        );
+
+        // delete item empty
+        informacionDesfrag = informacionDesfrag.filter((item) => item != "");
+
+        // save information format json
+        informacionDesfrag = informacionDesfrag.map((item) => {
+          let data = item.split(":");
+          return {
+            col_ficha1: data[0],
+            col_ficha2: data[1],
+          };
+        });
+
+        console.log(informacionDesfrag);
+
         let data = {
           empresa: this.cuentasStore.infoClient.empresa,
           rut: this.cuentasStore.infoClient.rut,
           modalidad_negocio: this.modality,
           modalidad_integracion: this.typeIntegration,
-          informacion: this.informacion,
+          informacion: informacionDesfrag,
           avance: [
             {
-              fecha: this.date,
+              fecha: "00/00/0000 al 00/00/0000",
               porcentaje_avance: 0,
-              estado: "Pendiente",
+              estado: "Pendiente, cliente sin avance",
               comentarios: "-",
             },
           ],
@@ -237,8 +260,6 @@ export default {
               position: "top",
               timeout: 4000,
             });
-
-            console.log("dasdadasd", error);
           }
         };
 

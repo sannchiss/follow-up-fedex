@@ -1,56 +1,50 @@
 <template>
-  <div class="q-pa-md" style="max-width: 400px">
+  <div class="q-pa-md" style="width: 550px; max-width: 700px">
     <q-list bordered padding>
-      <q-item>
-        <q-item-section> </q-item-section>
-
-        <q-item-section side top>
-          <q-item-label caption>5 min ago</q-item-label>
-        </q-item-section>
-      </q-item>
-
-      <q-separator spaced />
       <q-item-label header>Lista avance</q-item-label>
-
-      {{ listaAvance }}
 
       <q-scroll-area
         :thumb-style="thumbStyle"
         :bar-style="barStyle"
-        style="height: 300px; max-width: 400px"
+        style="height: 500px; width: auto; max-width: 550px"
       >
         <!-- <div v-if="integracionesStore.spinnerComment" class="absolute-center">
           <q-spinner-comment color="secondary" size="5em" />
         </div> -->
 
-        <q-item v-for="item in listaAvance.avance" :key="item.id">
-          <q-item-section top avatar>
-            <q-avatar>
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-            </q-avatar>
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label class="text-caption">{{ item.fecha }}</q-item-label>
-            <q-item-label class="text-overline">{{
-              item.comentarios
-            }}</q-item-label>
-          </q-item-section>
-
-          <accion-boton-lista-avance :item="item" />
-
-          <!--
-          <q-item-section side top>
-            <q-badge> {{ item.progress + "%" }} </q-badge>
-          </q-item-section>
-
-          <q-item-section side top>
-            <q-item-label caption>5 min ago</q-item-label>
-          </q-item-section> -->
-        </q-item>
+        <q-list bordered separator>
+          <q-item
+            v-for="(item, key) in this.integracionesStore.rowAvance.avance"
+            :key="key"
+          >
+            <q-item-section top avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-caption">
+                <q-badge color="orange" text-color="black">
+                  {{ item.fecha.from + " al " + item.fecha.to }}</q-badge
+                >
+              </q-item-label>
+              <q-item-label class="text-overline text-justify">{{
+                item.comentarios
+              }}</q-item-label>
+            </q-item-section>
+            <accion-boton-lista-avance
+              :id="{
+                idIntegracion: integracionesStore.rowAvance.id,
+                key: key,
+              }"
+            />
+            <q-item-section side top>
+              <q-badge> {{ item.porcentaje_avance + "%" }} </q-badge>
+              <q-icon name="star" color="yellow" />
+            </q-item-section>
+          </q-item>
+        </q-list>
       </q-scroll-area>
-
-      <q-separator spaced inset="item" />
     </q-list>
   </div>
 </template>
@@ -94,10 +88,19 @@ export default {
     this.integracionesStore.getHistoryIntegrations();
   },
 
-  computed: {
+  /*   computed: {
     maxProgress() {
       return Math.max(
         ...this.integracionesStore.rowAdvance.avance.porcentaje_avance
+      );
+    },
+  }, */
+
+  getters: {
+    // order ascendent this.integracionesStore.rowAvance.avance by porcentaje_avance
+    orderDesc() {
+      return this.integracionesStore.rowAvance.avance.sort(
+        (a, b) => a.porcentaje_avance - b.porcentaje_avance
       );
     },
   },
