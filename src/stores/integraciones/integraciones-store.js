@@ -21,6 +21,7 @@ export const useIntegracionesStore = defineStore("integraciones", {
     historyIntegration: [],
     dialogoAvance: false,
     dialogoFichaCliente: false,
+    dialogoVerFicha: false,
     account_txa: "",
     spinnerComment: true,
     progress: [],
@@ -29,6 +30,7 @@ export const useIntegracionesStore = defineStore("integraciones", {
 
     search: "",
     rows: [],
+    progress: 0,
 
   }),
 
@@ -40,7 +42,7 @@ export const useIntegracionesStore = defineStore("integraciones", {
     // get history of integrations
     getItemIntegracion(state) {
 
-      if (state.search == '') {
+      if (state.search == '' || state.search == null) {
         return state.rows
       }
       else {
@@ -49,7 +51,9 @@ export const useIntegracionesStore = defineStore("integraciones", {
             row.cuentaTxa.toLowerCase().includes(state.search.toLowerCase()) ||
             row.cuentaGts.toLowerCase().includes(state.search.toLowerCase()) ||
             row.rut.toLowerCase().includes(state.search.toLowerCase()) ||
-            row.estado_integracion.toLowerCase().includes(state.search.toLowerCase())
+            row.estado_integracion.toLowerCase().includes(state.search.toLowerCase()) ||
+            row.modalidad_negocio.toLowerCase().includes(state.search.toLowerCase()) ||
+            row.modalidad_integracion.toLowerCase().includes(state.search.toLowerCase())
 
         }
         )
@@ -68,20 +72,25 @@ export const useIntegracionesStore = defineStore("integraciones", {
     // max progress
     maxProgress: (state) => {
       // get porcent max state.rowAvance.avance.porcentaje_avance
+
+
       const lista = []
       state.rowAvance.avance.map((item) => {
         lista.push(item.porcentaje_avance)
+        //console.log("lista", lista)
       }
       )
 
       // returnar el maximo de la lista
-      return Math.max.apply(
+      state.progress = Math.max.apply(
         Math,
         lista.map(function (o) {
           return o / 10;
         }
         )
       );
+
+      return state.progress
 
 
 
@@ -149,7 +158,7 @@ export const useIntegracionesStore = defineStore("integraciones", {
       const account_txaNow =
         this.account_txa == "" ? account_txa : this.account_txa;
 
-      console.log("account_txa", account_txaNow);
+      //console.log("account_txa", account_txaNow);
 
       this.historyIntegration = [];
       this.progress = [];
