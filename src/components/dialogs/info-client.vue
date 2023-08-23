@@ -5,9 +5,7 @@
         <q-card-section>
           <div class="text-h6">Información cliente</div>
         </q-card-section>
-
         <q-separator />
-
         <q-card-section style="max-height: 100vh" class="scroll">
           <!--add form-->
           <q-form
@@ -16,7 +14,7 @@
             class="q-gutter-sm"
             name="form-info"
           >
-            <!--             <div class="row">
+            <!-- <div class="row">
               <q-input filled v-model="date" mask="date" :rules="['date']">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
@@ -42,41 +40,42 @@
             </div> -->
 
             <q-input
-              filled
               v-model="cuentasStore.infoClient.empresa"
               label="Name"
+              clearable
               lazy-rules
-              readonly
+              type="text"
+              :disable="disabled == 0"
               :rules="[
                 (val) => (val && val.length > 0) || 'Please type something',
               ]"
             />
             <q-input
-              filled
               v-model="cuentasStore.infoClient.rut"
               label="Rut"
+              clearable
               lazy-rules
-              readonly
+              :disable="disabled == 0"
               :rules="[
                 (val) => (val && val.length > 0) || 'Please type something',
               ]"
             />
             <q-input
-              filled
               v-model="cuentasStore.infoClient.cuentaTxa"
               label="Cuenta TXA"
+              clearable
               lazy-rules
-              readonly
+              :disable="disabled == 0"
               :rules="[
                 (val) => (val && val.length > 0) || 'Please type something',
               ]"
             />
             <q-input
-              filled
               v-model="cuentasStore.infoClient.cuentaGts"
               label="Cuenta GTS"
+              clearable
               lazy-rules
-              readonly
+              :disable="disabled == 0"
               :rules="[
                 (val) => (val && val.length > 0) || 'Please type something',
               ]"
@@ -86,7 +85,6 @@
                 <div class="col-4 col-md-6">
                   <q-select
                     v-model="modality"
-                    filled
                     autocomplete="off"
                     :options="['B2B', 'B2C', 'B2G']"
                     label="Modalidad"
@@ -117,7 +115,6 @@
             <q-input
               type="textarea"
               v-model="informacion"
-              filled
               clearable
               autogrow
               :rules="[
@@ -131,6 +128,12 @@
         <q-separator />
 
         <q-card-actions align="right">
+          <q-btn
+            flat
+            label="Editar"
+            color="primary"
+            @click="disabled = (disabled + 1) % 2"
+          />
           <q-btn flat label="Cancelar" color="primary" v-close-popup />
           <q-btn
             flat
@@ -152,6 +155,12 @@ import { useCuentasStore } from "src/stores/cuentas/cuentas-store";
 import handleAdvanceCompany from "src/composables/HandleAdvanceCompany";
 
 export default {
+  data() {
+    return {
+      disabled: 0,
+    };
+  },
+
   setup() {
     const cuentasStore = useCuentasStore();
     const { insertListAdvanceCompany } = handleAdvanceCompany();
@@ -233,8 +242,6 @@ export default {
           estado_integracion: "Pendiente",
           //date: this.date,
         };
-
-        console.log(data);
 
         // insert data in list advance company
         const handleAsigCompany = async () => {

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { dbfirebase } from "/src/firebase/index";
+import { Notify } from "quasar";
 
 import {
   collection,
@@ -12,6 +13,15 @@ import {
   orderBy,
   getDoc,
 } from "firebase/firestore";
+
+import handleBucketsFile from "src/composables/HandleBucketsFiles";
+
+const { createBucket, deleteBucket, uploadFile, getListBucketFiles, getFilesInBuckets } = handleBucketsFile();
+
+import useSupabase from 'src/boot/supabase'
+
+const { supabase } = useSupabase()
+
 
 export const useIntegracionesStore = defineStore("integraciones", {
   state: () => ({
@@ -27,12 +37,27 @@ export const useIntegracionesStore = defineStore("integraciones", {
     progress: [],
     porcentAdvance: 0,
 
-
+    // variables Buscador
     search: "",
     rows: [],
     progress: 0,
 
+    // variables modal adjuntos
+    dialogoAdjunto: false,
+    position: "bottom",
+
+    file: null,
+    adjunto: null,
+    enableUpload: false,
+    progresoPorcentaje: 0,
+    completado: 'accent',
+    listaArchivos: [],
+
+    ver: 'Ver',
+
   }),
+
+
 
   getters: {
     /*   doubleCount (state) {
@@ -97,25 +122,127 @@ export const useIntegracionesStore = defineStore("integraciones", {
 
     },
 
-    /* integrationsFilter(state) {
+    // sanitize rowAvance delete spaces, points, accent mark and lowercase and add _
+    sanitizeEmpresa(state) {
+      return state.rowAvance.empresa.replace(/\s+/g, '_').replace(/\./g, '').toLowerCase()
+    }
 
-      if (this.searchIntegration == '') {
-        return state.integrations
+
+
+  },
+
+  actions: {
+
+    async factory(file) {
+
+      const listaBucket = await getListBucketFiles().then((res) => {
+        return res
+      })
+
+      // comprobar si existe el nombre del bucket this.rowAvance
+      const bucketsExist = listaBucket.find((item) => {
+        return item.name == this.sanitizeEmpresa
       }
+      )
 
+      console.log("bucketsExist", bucketsExist)
+
+      if (bucketsExist == undefined) {
+        // create bucket
+        await createBucket(this.sanitizeEmpresa).then((res) => {
+          console.log("res", res)
+        })
+
+
+
+      }
       else {
 
-        return state.integrations.filter((integration) => {
-          //console.log(integration.company.toLowerCase().includes(this.searchIntegration.toLowerCase()))
-          return integration.company.toLowerCase().includes(this.searchIntegration.toLowerCase())
+        Notify.create({
+          type: 'negative',
+          color: 'negative',
+          message: 'El bucket ya existe',
+          position: 'top',
+          icon: 'report_problem'
         })
 
       }
 
-    } */
-  },
+      this.file = file
 
-  actions: {
+      /************************************ */
+
+
+    },
+
+    async bucketsFiles() {
+
+      await uploadFile(this.sanitizeEmpresa, this.file).then((res) => {
+
+        // if success
+        if (res.path != undefined) {
+
+          this.completado = 'secondary'
+          this.progresoPorcentaje = 1
+
+          // clear listaArchivos
+          this.listaArchivos = []
+
+
+          setTimeout(() => {
+            this.completado = 'accent'
+            this.progresoPorcentaje = 0
+            this.adjunto = null
+          }, 2000);
+
+
+          this.getFilesInBuckets()
+
+          console.log("res", res)
+
+        }
+        else if (res.error != undefined) {
+          // if error
+          console.log("aqui entre")
+          this.completado = 'negative'
+          this.progresoPorcentaje = 0.5
+        }
+
+
+
+      }
+      )
+
+
+    },
+
+    async getFilesInBuckets() {
+
+      console.log("this.sanitizeEmpresa", this.sanitizeEmpresa)
+
+      await getFilesInBuckets(this.sanitizeEmpresa).then((res) => {
+
+        this.listaArchivos = res
+
+        if (this.listaArchivos.length == 0) {
+
+          console.log("es alli", res)
+
+        }
+
+
+      }
+      )
+
+
+
+    },
+
+
+
+
+
+
     async getIntegrations() {
       this.integrations = [];
       this.historyIntegration = [];
@@ -138,6 +265,7 @@ export const useIntegracionesStore = defineStore("integraciones", {
 
       this.porcentAdvance = 10;
     },
+
 
     async getFichaCliente(id) {
       const data = [];
@@ -251,6 +379,10 @@ export const useIntegracionesStore = defineStore("integraciones", {
           });
         });
       });
-    },
+    }
+
+
+
+
   },
 });

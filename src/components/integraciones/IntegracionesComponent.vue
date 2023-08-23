@@ -33,155 +33,170 @@
       <q-tab-panel name="integracion_gts">
         <!--inicio contenido tab integraciones GTS-->
         <!--add q-list-->
-        <q-list bordered separator style="width: auto">
-          <q-item v-for="row in integraciones" :key="row.empresa">
-            <q-item-section avatar>
-              <q-icon color="primary" name="business" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ row.empresa }}</q-item-label>
-              <q-item-label caption>{{ row.cuentaTxa }}</q-item-label>
-            </q-item-section>
+        <div class="scroll" style="height: 700px">
+          <q-list bordered separator style="width: auto">
+            <q-item v-for="row in integraciones" :key="row.empresa">
+              <q-item-section avatar>
+                <q-icon color="primary" name="business" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ row.empresa }}</q-item-label>
+                <q-item-label caption>{{ row.cuentaTxa }}</q-item-label>
+              </q-item-section>
 
-            <q-separator vertical />
+              <q-separator vertical />
 
-            <q-item-section side>
-              <span
-                class="text-grey-8"
-                v-if="row.estado_integracion == 'Pendiente'"
-              >
-                <q-badge outline color="negative">
-                  {{ row.estado_integracion }}
-                </q-badge>
-              </span>
-              <span
-                class="text-grey-8"
-                v-else-if="row.estado_integracion == 'En Proceso'"
-              >
-                <q-badge outline color="warning">
-                  {{ row.estado_integracion }}
-                </q-badge>
-              </span>
-              <span
-                class="text-grey-8"
-                v-else-if="row.estado_integracion == 'Finalizado'"
-              >
-                <q-badge outline color="green">
-                  {{ row.estado_integracion }}
-                </q-badge>
-              </span>
+              <q-item-section side>
+                <span
+                  class="text-grey-8"
+                  v-if="row.estado_integracion == 'Pendiente'"
+                >
+                  <q-badge outline color="negative">
+                    {{ row.estado_integracion }}
+                  </q-badge>
+                </span>
+                <span
+                  class="text-grey-8"
+                  v-else-if="row.estado_integracion == 'En Proceso'"
+                >
+                  <q-badge outline color="warning">
+                    {{ row.estado_integracion }}
+                  </q-badge>
+                </span>
+                <span
+                  class="text-grey-8"
+                  v-else-if="row.estado_integracion == 'Finalizado'"
+                >
+                  <q-badge outline color="green">
+                    {{ row.estado_integracion }}
+                  </q-badge>
+                </span>
 
-              <span
-                class="text-grey-8"
-                v-else-if="row.estado_integracion == 'Cancelada'"
-              >
-                <q-badge outline color="red">
-                  {{ row.estado_integracion }}
-                </q-badge>
-              </span>
+                <span
+                  class="text-grey-8"
+                  v-else-if="row.estado_integracion == 'Cancelada'"
+                >
+                  <q-badge outline color="red">
+                    {{ row.estado_integracion }}
+                  </q-badge>
+                </span>
+
+                <q-item-section side>
+                  <span>
+                    <q-badge outline color="primary">
+                      {{ row.modalidad_negocio }}
+                    </q-badge>
+                  </span>
+                </q-item-section>
+              </q-item-section>
 
               <q-item-section side>
                 <span>
                   <q-badge outline color="primary">
-                    {{ row.modalidad_negocio }}
+                    {{ row.modalidad_integracion }}
                   </q-badge>
                 </span>
               </q-item-section>
-            </q-item-section>
 
-            <q-item-section side>
-              <span>
-                <q-badge outline color="primary">
-                  {{ row.modalidad_integracion }}
-                </q-badge>
-              </span>
-            </q-item-section>
-
-            <q-item-section side>
-              <q-circular-progress
-                show-value
-                font-size="12px"
-                :value="row.porcentaje_integracion"
-                size="50px"
-                :thickness="0.22"
-                color="teal"
-                track-color="grey-3"
-                class="q-ma-md"
-              >
-                {{ row.porcentaje_integracion }}%
-              </q-circular-progress>
-            </q-item-section>
-
-            <q-item-section side>
-              <div class="q-pa-md row items-start q-gutter-md">
-                <q-expansion-item
-                  class="shadow-1 overflow-hidden"
-                  style="border-radius: 20px; width: 300px"
-                  icon="explore"
-                  label="Resumen"
-                  header-class="bg-primary text-white"
-                  expand-icon-class="text-white"
-                  @before-show="getAvanceActual(row)"
+              <q-item-section side>
+                <q-circular-progress
+                  show-value
+                  font-size="12px"
+                  :value="row.porcentaje_integracion"
+                  size="50px"
+                  :thickness="0.22"
+                  color="teal"
+                  track-color="grey-3"
+                  class="q-ma-md"
                 >
-                  <q-card>
-                    <q-card-section>
-                      <q-card class="act-comentario bg-grey-2">
-                        <q-card-section>
-                          {{ row.avance[0].comentarios }}
-                        </q-card-section>
-                        <q-separator inset="" />
-                        <q-card-section class="text-caption">
-                          {{
-                            row.avance[0].fecha.from +
-                            " al " +
-                            row.avance[0].fecha.to
-                          }}
-                        </q-card-section>
-                      </q-card>
-                    </q-card-section>
-                    <q-card-actions align="left">
-                      <q-btn
-                        flat
-                        round
-                        color="red"
-                        icon="add_task"
-                        @click="avance(row)"
-                      />
+                  {{ row.porcentaje_integracion }}%
+                </q-circular-progress>
+              </q-item-section>
 
-                      <acciones-avance :row="row" />
+              <q-item-section side>
+                <div class="q-pa-md row items-start q-gutter-md">
+                  <q-expansion-item
+                    class="shadow-1 overflow-hidden"
+                    style="border-radius: 20px; width: 300px"
+                    icon="explore"
+                    label="Resumen"
+                    header-class="bg-primary text-white"
+                    expand-icon-class="text-white"
+                    @before-show="getAvanceActual(row)"
+                  >
+                    <q-card>
+                      <q-card-section>
+                        <q-card class="act-comentario bg-grey-2">
+                          <q-card-section>
+                            {{ row.avance[0].comentarios }}
+                          </q-card-section>
+                          <q-separator inset="" />
+                          <q-card-section class="text-caption">
+                            {{
+                              row.avance[0].fecha.from +
+                              " al " +
+                              row.avance[0].fecha.to
+                            }}
+                          </q-card-section>
+                        </q-card>
+                      </q-card-section>
+                      <q-card-actions align="left">
+                        <q-btn
+                          flat
+                          round
+                          color="red"
+                          icon="add_task"
+                          @click="avance(row)"
+                        />
 
-                      <acciones-mail />
+                        <acciones-mail />
 
-                      <q-btn
-                        flat
-                        round
-                        dense
-                        icon="delete"
-                        color="negative"
-                        @click="remove(row.id)"
-                      />
+                        <q-btn
+                          flat
+                          round
+                          dense
+                          icon="delete"
+                          color="negative"
+                          @click="remove(row.id)"
+                        />
 
-                      <q-btn
-                        flat
-                        round
-                        dense
-                        icon="info"
-                        color="primary"
-                        @click="info(row)"
-                      />
-                    </q-card-actions>
-                  </q-card>
-                </q-expansion-item>
-              </div>
-            </q-item-section>
-          </q-item>
+                        <q-btn
+                          flat
+                          round
+                          dense
+                          icon="info"
+                          color="primary"
+                          @click="info(row)"
+                        />
+                      </q-card-actions>
+                    </q-card>
+                  </q-expansion-item>
+                </div>
+              </q-item-section>
 
-          <q-separator />
-        </q-list>
+              <q-item-section side>
+                <q-btn
+                  icon="attach_file"
+                  flat
+                  dense
+                  round
+                  @click.prevent="
+                    (integracionesStore.dialogoAdjunto = true),
+                      (integracionesStore.rowAvance = row),
+                      integracionesStore.getFilesInBuckets()
+                  "
+                />
+              </q-item-section>
+            </q-item>
 
+            <q-separator />
+          </q-list>
+        </div>
         <avance-dialogo />
+        <acciones-avance />
         <info-ficha />
         <envio-ficha-dialogo />
+        <accion-adjunto :row="row" />
 
         <!--fin de contenido de integraciones GTS-->
       </q-tab-panel>
@@ -195,6 +210,7 @@
 
 <script>
 import { useIntegracionesStore } from "src/stores/integraciones/integraciones-store";
+import { BottomSheet } from "quasar";
 import { useQuasar, exportFile } from "quasar";
 import { ref } from "vue";
 
@@ -222,6 +238,15 @@ export default {
 
     const integracionesStore = useIntegracionesStore();
 
+    function onScroll(e) {
+      if (
+        e.target.scrollHeight - e.target.scrollTop - 10 <=
+        e.target.clientHeight
+      ) {
+        this.integracionesStore.getMore();
+      }
+    }
+
     const $q = useQuasar();
 
     function openInfo(account_txa) {
@@ -239,10 +264,12 @@ export default {
       });
     }
 
-    const filter = ref("");
-
     return {
       integracionesStore,
+      planB: async () => {
+        console.log("planB");
+      },
+      onScroll,
       openInfo,
       tab: ref("integracion_gts"),
     };
@@ -370,6 +397,9 @@ export default {
       .default,
 
     "acciones-mail": require("../shared/acciones-mail-integraciones.vue")
+      .default,
+
+    "accion-adjunto": require("../dialogs/hoja_dialogo/adjunto-dialogo.vue")
       .default,
   },
 };
