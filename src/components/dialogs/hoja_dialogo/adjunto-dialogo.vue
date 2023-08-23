@@ -55,7 +55,9 @@
                   round
                   dense
                   flat
-                  icon="attach_file"
+                  icon="save"
+                  color="primary"
+                  outline
                   @click="integracionesStore.bucketsFiles"
                 />
               </template>
