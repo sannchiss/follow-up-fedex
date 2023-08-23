@@ -33,7 +33,11 @@
       <q-tab-panel name="integracion_gts">
         <!--inicio contenido tab integraciones GTS-->
         <!--add q-list-->
-        <div class="scroll" style="height: 700px">
+        <q-scroll-area
+          :thumb-style="thumbStyle"
+          :bar-style="barStyle"
+          style="height: 700px; width: 1124px; max-width: 1200px"
+        >
           <q-list bordered separator style="width: auto">
             <q-item v-for="row in integraciones" :key="row.empresa">
               <q-item-section avatar>
@@ -191,7 +195,7 @@
 
             <q-separator />
           </q-list>
-        </div>
+        </q-scroll-area>
         <avance-dialogo />
         <acciones-avance />
         <info-ficha />
