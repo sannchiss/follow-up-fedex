@@ -7,7 +7,7 @@
           :key="item.opcion"
           clickable
           v-close-popup
-          @click="item.click"
+          @click="item.click(row)"
         >
           <q-item-section :icon="item.icon">{{ item.opcion }}</q-item-section>
         </q-item>
@@ -20,14 +20,25 @@
 import { useIntegracionesStore } from "src/stores/integraciones/integraciones-store";
 
 export default {
+  props: {
+    row: {
+      type: Array,
+      default: () => [],
+    },
+  },
+
   setup() {
     const integracionesStore = useIntegracionesStore();
+
     const menu_mail = [
       {
         opcion: "Mail integracion",
         icon: "mail",
-        click: () => {
-          console.log("mail integracion");
+        click: (row) => {
+          integracionesStore.dialogoCorreo = true;
+          integracionesStore.rowAvance = row;
+
+          console.log("row", integracionesStore.rowAvance);
         },
       },
       {
@@ -39,6 +50,7 @@ export default {
       },
     ];
     return {
+      // eslint-disable-next-line vue/no-dupe-keys
       menu_mail,
     };
   },

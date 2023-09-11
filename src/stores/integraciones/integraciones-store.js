@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import { dbfirebase } from "/src/firebase/index";
-import { Notify } from "quasar";
+import { Notify, date } from "quasar";
+import { ref } from "vue";
+
+
 
 import {
   collection,
@@ -53,7 +56,26 @@ export const useIntegracionesStore = defineStore("integraciones", {
     completado: 'accent',
     listaArchivos: [],
 
-    ver: 'Ver',
+    // variables modal correo
+    dialogoCorreo: false,
+    email: '',
+
+    payload: {
+      fecha: ref('2023-09-11'),
+      fase_del_dia: ref(''),
+      id_project: "",
+      empresa: "",
+      modalidad_de_negocio: "",
+      modalidad_de_integracion: ref(null),
+      tipo_de_impresion: "",
+      usuarios_capacitados: "",
+      propiedad_de_impresora: "",
+      propiedad_pc: "Cliente",
+      devolucion_de_documentos: "No",
+      para: "ricardosilva@fedex.com",
+      con_copia_a: "sannchiss.perez@fedex.com",
+
+    }
 
   }),
 
@@ -125,6 +147,88 @@ export const useIntegracionesStore = defineStore("integraciones", {
     // sanitize rowAvance delete spaces, points, accent mark and lowercase and add _
     sanitizeEmpresa(state) {
       return state.rowAvance.empresa.replace(/\s+/g, '_').replace(/\./g, '').toLowerCase()
+    },
+
+
+    getPhaseOfDay: () => {
+      const date = new Date();
+      const hour = date.getHours();
+
+      if (hour >= 0 && hour <= 12) {
+        return "Mañana";
+      } else if (hour >= 13 && hour <= 18) {
+        return "Tarde";
+      } else if (hour >= 19 && hour <= 23) {
+        return "Noche";
+      }
+
+
+    },
+
+
+    editorMail: (state) => {
+
+      console.log("json", json)
+
+      // capture getter getPhaseOfDay
+      const phaseOfDay = state.getPhaseOfDay
+
+      const payload = {
+        company: state.rowAvance.empresa,
+        phase_of_day: phaseOfDay,
+        service_type: state.rowAvance.modalidad_negocio,
+        id_project: "",
+        integration_type: state.rowAvance.modalidad_integracion,
+        print_type: "",
+        trained_user: "",
+        property_print: "",
+        property_pc: "",
+        return_document: "",
+        email: "ricardosilva@fedex.com",
+        reply_to: "sannchiss.perez@fedex.com",
+      };
+
+      return "para: " +
+        payload.email +
+        "</br>" +
+        "con_copia_a: " +
+        payload.reply_to +
+        "</br>" +
+        "empresa: " +
+        payload.company +
+        "</br>" +
+        "id_proyecto: " +
+        payload.id_project +
+        "</br>" +
+        "----------------------------------------------------------------------------------" +
+        "</br>" +
+        "fase_del_dia: " +
+        payload.phase_of_day +
+        "</br>" +
+        "modalidad_de_negocio: " +
+        payload.service_type +
+        "</br>" +
+        "modalidad_de_integracion: " +
+        payload.integration_type +
+        "</br>" +
+        "tipo_de_impresion: " +
+        payload.print_type +
+        "</br>" +
+        "usuarios_capacitados: " +
+        payload.trained_user +
+        "</br>" +
+        "propiedad_de_impresora: " +
+        payload.property_print +
+        "</br>"
+        +
+        "propiedad_de_pc: " +
+        payload.property_pc +
+        "</br>" +
+        "devolucion_de_documentos: " +
+        payload.return_document +
+        "</br>"
+
+
     }
 
 

@@ -153,7 +153,7 @@
                           @click="avance(row)"
                         />
 
-                        <acciones-mail />
+                        <acciones-mail :row="row" />
 
                         <q-btn
                           flat
@@ -201,6 +201,7 @@
         <info-ficha />
         <envio-ficha-dialogo />
         <accion-adjunto :row="row" />
+        <accion-mail :row="row" />
 
         <!--fin de contenido de integraciones GTS-->
       </q-tab-panel>
@@ -369,7 +370,6 @@ export default {
     },
 
     info(row) {
-      /// this.integracionesStore.rowInfo = row;
       this.integracionesStore.rowAvance = row;
       this.integracionesStore.dialogoVerFicha = true;
     },
@@ -405,6 +405,8 @@ export default {
 
     "accion-adjunto": require("../dialogs/hoja_dialogo/adjunto-dialogo.vue")
       .default,
+
+    "accion-mail": require("../dialogs/hoja_dialogo/mail-dialogo.vue").default,
   },
 };
 </script>
