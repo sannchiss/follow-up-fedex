@@ -241,6 +241,7 @@
 import { useIntegracionesStore } from "src/stores/integraciones/integraciones-store";
 import { useQuasar } from "quasar";
 import emailjs from "@emailjs/browser";
+
 import { ref } from "vue";
 
 export default {
@@ -313,35 +314,50 @@ export default {
           empresa: integracionesStore.payload.empresa,
         };
 
-        console.log("json", templateParams);
+        // question about send email
+        $q.dialog({
+          dark: true,
+          title: "Enviar correo",
+          message: "¿Desea enviar el correo?",
+          cancel: "Cancelar",
+          persistent: true,
+          ok: "Enviar",
+        })
+          .onOk(() => {
+            emailjs
+              .send(
+                "service_oghzm3i",
+                "template_gvdmscx",
+                templateParams,
+                "8y6vymIBpdZEdKKoL"
+              )
+              .then(
+                function (response) {
+                  $q.dialog({
+                    dark: true,
+                    title: "Correo enviado",
+                    message:
+                      "El correo se envio correctamente:" +
+                      " " +
+                      response.status +
+                      " " +
+                      response.text,
+                    ok: "Ok",
+                  });
 
-        emailjs
-          .send(
-            "service_oghzm3i",
-            "template_gvdmscx",
-            templateParams,
-            "8y6vymIBpdZEdKKoL"
-          )
-          .then(
-            function (response) {
-              $q.dialog({
-                dark: true,
-                title: "Correo enviado",
-                message:
-                  "El correo se envio correctamente:" +
-                  " " +
-                  response.status +
-                  " " +
-                  response.text,
-                ok: "Ok",
-              });
-
-              console.log("SUCCESS!", response.status, response.text);
-            },
-            function (error) {
-              console.log("FAILED...", error);
-            }
-          );
+                  console.log("SUCCESS!", response.status, response.text);
+                },
+                function (error) {
+                  console.log("FAILED...", error);
+                }
+              );
+          })
+          .onCancel(() => {
+            console.log("cancel");
+          })
+          .onDismiss(() => {
+            console.log("I am triggered on both OK and Cancel");
+          });
 
         /* emailjs
           .sendForm(
@@ -386,6 +402,10 @@ export default {
         //   this.editor = "";
       },
     };
+  },
+
+  mounted() {
+    // this.$refs.editor.focus();
   },
 };
 </script>

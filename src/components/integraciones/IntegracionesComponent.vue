@@ -137,9 +137,7 @@
                           <q-separator inset="" />
                           <q-card-section class="text-caption">
                             {{
-                              row.avance[0].fecha.from +
-                              " al " +
-                              row.avance[0].fecha.to
+                              row.avance[0].fecha
                             }}
                           </q-card-section>
                         </q-card>

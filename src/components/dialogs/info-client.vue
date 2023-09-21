@@ -202,7 +202,7 @@ export default {
 
         // separate content textarea informacion by line
         let informacionDesfrag = this.informacion.split("\n");
-        0;
+
         // convert /t to space and convert to array
         informacionDesfrag = informacionDesfrag.map((item) =>
           item.replace(/\t/g, ":")

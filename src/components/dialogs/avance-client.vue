@@ -18,7 +18,7 @@
         <div class="row">
           <div class="col-12 col-md-3">
             <div class="q-pa-md">
-              <q-date v-model="model" range />
+              <q-date v-model="model" today-btn />
             </div>
           </div>
           <div class="col-12 col-md-auto">
@@ -188,7 +188,7 @@ export default {
       integracionesStore,
       modelOptionsIntegration: ref([]),
       filterOptions,
-      model: ref({ from: today, to: endDay }),
+      model: ref(today),
       comentarios: ref(""),
       fnMarkerLabel: (val) => `${10 * val}%`,
 

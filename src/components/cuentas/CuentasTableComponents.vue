@@ -49,6 +49,38 @@
         />
       </template>
 
+      <template v-slot:body-cell-CuentaGTS="props">
+        <q-td :props="props">
+          <div>
+            <q-badge color="primary" text-color="white" :label="props.value" />
+            <!--  <q-badge color="purple" :label="props.value" /> -->
+            <q-btn
+              round
+              color="blue"
+              flat
+              icon="content_copy"
+              @click="copyOne(props.value)"
+            />
+          </div>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-CuentaTXA="props">
+        <q-td :props="props">
+          <div>
+            <q-badge color="primary" text-color="white" :label="props.value" />
+            <!--  <q-badge color="purple" :label="props.value" /> -->
+            <q-btn
+              round
+              color="blue"
+              flat
+              icon="content_copy"
+              @click="copyOne(props.value)"
+            />
+          </div>
+        </q-td>
+      </template>
+
       <template v-slot:body-cell="props">
         <q-td :props="props">
           <q-badge color="white" text-color="black" :label="props.value" />
@@ -92,14 +124,14 @@ const columns = [
     color: "primary",
   },
   {
-    name: "Cuenta GTS",
+    name: "CuentaGTS",
     align: "center",
     label: "Cuenta GTS",
     field: "cuentaGts",
     sortable: true,
   },
   {
-    name: "Cuenta TXA",
+    name: "CuentaTXA",
     align: "center",
     label: "Cuenta TXA",
     field: "cuentaTxa",
@@ -167,7 +199,8 @@ export default {
           this.selected
             .map(
               ({ empresa, cuentaGts, cuentaTxa, comuna, direccion }) =>
-                `Empresa: ${empresa} Cuenta GTS: ${cuentaGts} Cuenta TXA: ${cuentaTxa} Comuna: ${comuna} Direccion: ${direccion}`
+                // add salto de linea
+                `-Empresa:   ${empresa} \n-Cuenta GTS: ${cuentaGts} \n-Cuenta TXA: ${cuentaTxa} \n-Comuna:     ${comuna} \n-Direccion:  ${direccion}`
             )
             .join("\n")
         )
@@ -241,6 +274,24 @@ export default {
             console.log("Failed to copy to clipboard");
           }
         );
+    },
+
+    copyOne(value) {
+      console.log(value);
+
+      // copy data selected name and cuentaGts
+      navigator.clipboard.writeText(value).then(
+        () => {
+          Notify.create({
+            message: "Copied to clipboard",
+            color: "positive",
+            position: "top",
+          });
+        },
+        () => {
+          console.log("Failed to copy to clipboard");
+        }
+      );
     },
 
     async getListado() {

@@ -74,8 +74,14 @@ export const useIntegracionesStore = defineStore("integraciones", {
       devolucion_de_documentos: "No",
       para: "ricardosilva@fedex.com",
       con_copia_a: "sannchiss.perez@fedex.com",
+    },
 
-    }
+
+    /**Edit info-cliente */
+
+    informacionCliente: ""
+
+
 
   }),
 
@@ -161,6 +167,34 @@ export const useIntegracionesStore = defineStore("integraciones", {
       } else if (hour >= 19 && hour <= 23) {
         return "Noche";
       }
+
+
+    },
+
+    separateTextarea: (state) => {
+
+      // separate content textarea informacion by line
+      let informacionDesfrag = state.informacionCliente.split("\n");
+
+      // convert /t to space and convert to array
+      informacionDesfrag = informacionDesfrag.map((item) =>
+        item.replace(/\t/g, ":")
+      );
+
+      // delete item empty
+      informacionDesfrag = informacionDesfrag.filter((item) => item != "");
+
+      // save information format json
+      informacionDesfrag = informacionDesfrag.map((item) => {
+        let data = item.split(":");
+        return {
+          col_ficha1: data[0],
+          col_ficha2: data[1],
+        };
+      });
+
+
+      return informacionDesfrag;
 
 
     },

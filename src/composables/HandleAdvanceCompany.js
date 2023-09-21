@@ -54,6 +54,20 @@ export default function handleAdvanceCompany() {
     return avance
   }
 
+  const updateInfoCompany = async (id, data) => {
+    console.log("composable update avance", data, id)
+    const { data: avance, error } = await supabase
+      .from('advance_company')
+      .update({
+        informacion: data,
+      })
+      .eq('id', id)
+    if (error) throw error
+    return avance
+  }
+
+
+
   const updatePorcentEstado = async (porcent, estado, id) => {
     console.log("composable update avance", porcent, estado, id)
     const { data: avance, error } = await supabase
@@ -73,6 +87,7 @@ export default function handleAdvanceCompany() {
     insertListAdvanceCompany,
     deleteCompany,
     updateAdvanceCompany,
+    updateInfoCompany,
     updatePorcentEstado
   }
 

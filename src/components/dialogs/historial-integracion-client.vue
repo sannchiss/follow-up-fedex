@@ -25,7 +25,7 @@
             <q-item-section>
               <q-item-label class="text-caption">
                 <q-badge color="orange" text-color="black">
-                  {{ item.fecha.from + " al " + item.fecha.to }}</q-badge
+                  {{ item.fecha }}</q-badge
                 >
               </q-item-label>
               <q-item-label class="text-overline text-justify">{{
