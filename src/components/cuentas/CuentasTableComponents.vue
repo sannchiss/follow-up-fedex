@@ -49,6 +49,22 @@
         />
       </template>
 
+      <template v-slot:body-cell-empresa="props">
+        <q-td :props="props">
+          <div>
+            <q-badge color="primary" text-color="white" :label="props.value" />
+            <!--  <q-badge color="purple" :label="props.value" /> -->
+            <q-btn
+              round
+              color="blue"
+              flat
+              icon="content_copy"
+              @click="copyOne(props.value)"
+            />
+          </div>
+        </q-td>
+      </template>
+
       <template v-slot:body-cell-CuentaGTS="props">
         <q-td :props="props">
           <div>

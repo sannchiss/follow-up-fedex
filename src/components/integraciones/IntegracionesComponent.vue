@@ -31,12 +31,19 @@
 
     <q-tab-panels v-model="tab" animated class="bg-white-grey-5 text-black">
       <q-tab-panel name="integracion_gts">
+        <div
+          v-if="integraciones.length == 0"
+          class="full-width row flex-center text-accent q-gutter-sm"
+        >
+          <q-icon size="2em" name="sentiment_dissatisfied" />
+          <span> No hay resultados </span>
+        </div>
         <!--inicio contenido tab integraciones GTS-->
         <!--add q-list-->
         <q-scroll-area
           :thumb-style="thumbStyle"
           :bar-style="barStyle"
-          style="height: 700px; width: 1124px; max-width: 1200px"
+          style="height: 900px; width: 1124px; max-width: 1200px"
         >
           <q-list bordered separator style="width: auto">
             <q-item v-for="row in integraciones" :key="row.empresa">
@@ -45,7 +52,7 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ row.empresa }}</q-item-label>
-                <q-item-label caption>{{ row.cuentaTxa }}</q-item-label>
+                <q-item-label caption>{{ row.created_at }}</q-item-label>
               </q-item-section>
 
               <q-separator vertical />
@@ -136,9 +143,7 @@
                           </q-card-section>
                           <q-separator inset="" />
                           <q-card-section class="text-caption">
-                            {{
-                              row.avance[0].fecha
-                            }}
+                            {{ row.avance[0].fecha }}
                           </q-card-section>
                         </q-card>
                       </q-card-section>
@@ -376,7 +381,6 @@ export default {
   mounted() {
     this.getListAdvance().then((res) => {
       this.integracionesStore.rows = res;
-      //this.integracionesStore.setIntegrations(res);
     });
   },
 

@@ -116,13 +116,6 @@ const linksList = [
     icon: "settings",
     to: "/configuraciones",
   },
-  {
-    id: 5,
-    title: "Enable firebase",
-    caption: "enable-firebase.dev",
-    icon: "settings",
-    to: "/enable-firebase",
-  },
 ];
 
 export default {

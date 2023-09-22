@@ -96,7 +96,13 @@ export const useIntegracionesStore = defineStore("integraciones", {
     getItemIntegracion(state) {
 
       if (state.search == '' || state.search == null) {
-        return state.rows
+
+        // ordenar por fecha de forma descendente las integraciones
+        return state.rows.sort((a, b) => {
+          return b.id - a.id;
+        });
+
+
       }
       else {
         return state.rows.filter((row) => {
