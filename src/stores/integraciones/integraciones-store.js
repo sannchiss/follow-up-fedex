@@ -69,6 +69,7 @@ export const useIntegracionesStore = defineStore("integraciones", {
       modalidad_de_integracion: ref(null),
       tipo_de_impresion: "",
       usuarios_capacitados: "",
+      observaciones: "",
       propiedad_de_impresora: "",
       propiedad_pc: "Cliente",
       devolucion_de_documentos: "No",

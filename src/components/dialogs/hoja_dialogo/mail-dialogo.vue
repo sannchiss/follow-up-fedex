@@ -199,6 +199,20 @@
                       />
                     </div>
                   </div>
+
+                  <div class="row q-pt-lg">
+                    <div class="col-12">
+                      <q-input
+                        v-model="integracionesStore.payload.observaciones"
+                        type="textarea"
+                        rows="5"
+                        filled
+                        clearable
+                        color="green-8"
+                        label="Observaciones"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <q-separator />
@@ -310,6 +324,7 @@ export default {
           retorno_documento:
             integracionesStore.payload.devolucion_de_documentos,
           usuarios_capacitados: integracionesStore.payload.usuarios_capacitados,
+          observaciones: integracionesStore.payload.observaciones,
           fase_del_dia: integracionesStore.payload.fase_del_dia,
           empresa: integracionesStore.payload.empresa,
         };
