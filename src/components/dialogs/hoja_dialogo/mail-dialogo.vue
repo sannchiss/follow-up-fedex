@@ -99,7 +99,7 @@
                     <div class="col-4">
                       <q-input
                         v-model="integracionesStore.payload.id_project"
-                        type="number"
+                        type="text"
                         label="ID PROYECTO"
                       >
                         <template v-slot:before>
