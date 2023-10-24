@@ -52,7 +52,9 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ row.empresa }}</q-item-label>
-                <q-item-label caption>{{ row.created_at }}</q-item-label>
+                <q-item-label caption>{{
+                  "Txa: " + row.cuentaTxa + " - Gts: " + row.cuentaGts
+                }}</q-item-label>
               </q-item-section>
 
               <q-separator vertical />
