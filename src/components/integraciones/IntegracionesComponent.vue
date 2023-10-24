@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md" style="width: auto">
+  <div class="q-pa-md">
     <q-tabs
       v-model="tab"
       dense
@@ -43,7 +43,7 @@
         <q-scroll-area
           :thumb-style="thumbStyle"
           :bar-style="barStyle"
-          style="height: 900px; width: 1124px; max-width: 1200px"
+          style="height: 900px; width: 1224px; max-width: 1200px"
         >
           <q-list bordered separator style="width: auto">
             <q-item v-for="row in integraciones" :key="row.empresa">
@@ -192,7 +192,12 @@
                       (integracionesStore.rowAvance = row),
                       integracionesStore.getFilesInBuckets()
                   "
-                />
+                  @vnode-before-mount="
+                    integracionesStore.getFilesInBuckets(),
+                      (integracionesStore.rowAvance = row)
+                  "
+                >
+                </q-btn>
               </q-item-section>
             </q-item>
 
@@ -223,14 +228,18 @@ import { useQuasar, exportFile } from "quasar";
 import { ref } from "vue";
 
 import handleAdvanceCompany from "src/composables/HandleAdvanceCompany";
+import handleBucketsFiles from "src/composables/HandleBucketsFiles";
 
 const { getListAdvanceCompany, deleteCompany } = handleAdvanceCompany();
+const { getFilesInBuckets } = handleBucketsFiles();
 
 export default {
   data() {
     const rows = [];
+    const count = 0;
     return {
       rows,
+      count,
     };
   },
 
@@ -299,6 +308,18 @@ export default {
 
       this.integracionesStore.dialogoAvance = true;
     },
+
+    /*  async getBucketsCount(row) {
+      this.integracionesStore.rowAvance = row;
+      //console.log("getBucketsCount", this.integracionesStore.sanitizeEmpresa);
+
+      await getFilesInBuckets(this.integracionesStore.sanitizeEmpresa).then(
+        (res) => {
+          console.log("getFilesInBuckets", res);
+          this.integracionesStore.listaArchivos = res;
+        }
+      );
+    }, */
 
     // tomo el avance actual y lo muestro en la caja resumen de integraciones
     getAvanceActual(row) {

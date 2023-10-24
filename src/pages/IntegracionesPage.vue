@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <div class="q-gutter-md" style="max-width: 1200px">
+    <div class="q-gutter-md" style="max-width: 1500px">
       <integraciones-component />
     </div>
   </div>
@@ -14,16 +14,14 @@
 
 <script>
 export default {
-
   components: {
     /*     CuentasComponent: () => import('components/cuentas/CuentasComponent.vue'),
         CuentasTableComponent: () => import('components/cuentas/CuentasTableComponent.vue') */
 
-    'integraciones-component': require('components/integraciones/IntegracionesComponent.vue').default,
-
-  }
-
-}
+    "integraciones-component":
+      require("components/integraciones/IntegracionesComponent.vue").default,
+  },
+};
 </script>
 
 <style></style>

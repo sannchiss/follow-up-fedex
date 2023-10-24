@@ -363,21 +363,17 @@ export const useIntegracionesStore = defineStore("integraciones", {
 
     async getFilesInBuckets() {
 
-      console.log("this.sanitizeEmpresa", this.sanitizeEmpresa)
 
-      await getFilesInBuckets(this.sanitizeEmpresa).then((res) => {
-
-        this.listaArchivos = res
-
-        if (this.listaArchivos.length == 0) {
-
-          console.log("es alli", res)
-
+      await getFilesInBuckets(this.sanitizeEmpresa)
+        .then((res) => {
+          this.listaArchivos = res
         }
+        )
+        .finally(() => { })
 
 
-      }
-      )
+
+      return this.listaArchivos
 
 
 
