@@ -216,7 +216,7 @@ export default {
             .map(
               ({ empresa, cuentaGts, cuentaTxa, comuna, direccion }) =>
                 // add salto de linea
-                `-Empresa:   ${empresa} \n-Cuenta GTS: ${cuentaGts} \n-Cuenta TXA: ${cuentaTxa} \n-Comuna:     ${comuna} \n-Direccion:  ${direccion}`
+                `-Empresa:   ${empresa} \n-Cuenta GTS: ${cuentaGts} \n-Cuenta TXA: ${cuentaTxa} \n-Comuna:     ${comuna} \n-Dirección:  ${direccion}`
             )
             .join("\n")
         )
